@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    >
+    <include layout="@layout/topbar_first" android:id="@+id/layout_top"/>
+
+    <RelativeLayout
+        android:id="@+id/rl_operate"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:layout_alignParentBottom="true"
+
+        >
+
+        <Button
+            android:id="@+id/bt_scan"
+            android:layout_width="100dp"
+            android:layout_height="45dp"
+            android:layout_below="@id/bt_fcl"
+            android:layout_gravity="center_horizontal"
+            android:background="@drawable/shape_button_green"
+            android:gravity="center"
+            android:paddingBottom="5dp"
+            android:paddingTop="5dp"
+            android:text="@string/label_scan"
+            android:textColor="#FFFFFF"
+            android:textSize="20sp"
+            android:layout_alignParentLeft="true"
+            android:layout_marginLeft="15dp"/>
+
+        <Button
+            android:id="@+id/bt_seal"
+            android:layout_width="100dp"
+            android:layout_height="45dp"
+            android:layout_below="@id/bt_fcl"
+            android:layout_gravity="center_horizontal"
+            android:background="@drawable/shape_button_green"
+            android:gravity="center"
+            android:paddingBottom="5dp"
+            android:paddingTop="5dp"
+            android:text="@string/label_seal"
+            android:textColor="#FFFFFF"
+            android:textSize="20sp"
+            android:layout_marginRight="20dp"
+            android:layout_toRightOf="@id/bt_scan"
+            android:layout_marginLeft="20dp"
+            />
+        <Button
+            android:id="@+id/bt_submit"
+            android:layout_width="100dp"
+            android:layout_height="45dp"
+            android:layout_below="@id/bt_fcl"
+            android:layout_gravity="center_horizontal"
+            android:background="@drawable/shape_button_green"
+            android:gravity="center"
+            android:paddingBottom="5dp"
+            android:paddingTop="5dp"
+            android:text="@string/label_submit"
+            android:textColor="#FFFFFF"
+            android:textSize="20sp"
+            android:layout_alignParentRight="true"
+            android:layout_marginRight="15dp"
+            />
+    </RelativeLayout>
+
+    <android.support.v4.widget.SwipeRefreshLayout
+        android:id="@+id/srl_memos"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_above="@id/rl_operate"
+        android:layout_below="@id/layout_top">
+
+        <ListView
+            android:id="@+id/lv_memos"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:listSelector="@color/B7B7B7"
+            android:dividerHeight="2dp"
+            >
+        </ListView>
+    </android.support.v4.widget.SwipeRefreshLayout>
+
+
+</RelativeLayout>

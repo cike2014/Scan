@@ -1,0 +1,133 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <color name="main_bg_color">#f8f8f8</color>
+
+    <color name="result_view">#b0000000</color>
+    <color name="viewfinder_mask">#60000000</color>
+    <color name="possible_result_points">#c0ffff00</color>
+    <!--  -->
+    <color name="white">#ffffff</color>
+    <color name="transparent">#00000000</color>
+    <color name="darkgrey">#3c3c3c</color>
+    <color name="info_title">#f6f6f6</color>
+    <color name="info_context">#8f8d89</color>
+    <color name="info_list_text">#8f8f8f</color>
+    <color name="info_list_data">#909090</color>
+    <color name="info_list_context">#585858</color>
+    <color name="equipment_name">#676767</color>
+    <color name="manual_ziti">#b5d5bd</color>
+    <color name="manual_shuju">#bfbfbf</color>
+    <color name="manual_hine">#b9b9b9</color>
+    <color name="spos_save_img1">#fe5194</color>
+    <color name="spos_save_img2">#46ca3e</color>
+    <color name="spos_save_img3">#d7b338</color>
+    <color name="blue_bp">#177daf</color>
+    <color name="qushitu">#79afac</color>
+    <!-- 黑色 -->
+    <color name="black">#666666</color>
+    <!-- 红色 -->
+    <color name="red">#ef3c3b</color>
+    <!-- 象牙色 -->
+    <color name="lightyellow">#FFFFE0</color>
+    <!-- 绿色 -->
+    <color name="green">#3d9a5e</color>
+    <!-- 浅绿色 -->
+    <color name="Light_green">#15C7A9</color>
+    <!-- 浅灰色 -->
+    <color name="huise">#989898</color>
+    <color name="windows_gray">#EFEFEF</color>
+    <!-- 蓝色 -->
+    <color name="blue">#5c89b5</color>
+    <!-- main -->
+    <color name="tv_font_lan">#0179fc</color>
+    <color name="tv_font_black">#272727</color>
+
+    <!-- home_index -->
+    <color name="tab_background_color">#3c494d</color>
+    <color name="main_top_text_color">#333333</color>
+    <color name="main_top_text_background">#ffffff</color>
+    <!-- General -->
+    <color name="alert_circle">#CC0000</color>
+    <color name="confirm_circle">#669900</color>
+    <color name="info_cirle">#33b5e5</color>
+    <color name="silver">#C0C0C0</color>
+    <color name="blacks">#3b4144</color>
+    <color name="calendarBackgroundColor">#FFFFFF</color>
+
+    <!-- Fonts -->
+    <color name="monthTitleColor">#666666</color>
+    <color name="dayOfWeekColor">#aaaaaa</color>
+    <color name="dayOfMonthColor">#aeaeae</color>
+    <color name="currentDayOfMonthColor">#ffad43</color>
+    <color name="currentDayOfMonthSelectorColor">#aeaeae</color>
+
+    <!-- 蓝色字 -->
+    <color name="txt_blue">#69a2c0</color>
+
+    <color name="txt_huise">#ababab</color>
+
+    <!-- 浅灰色 -->
+    <color name="grey">#EEEEEE</color>
+    <!-- 天蓝色 -->
+    <color name="gray">#808080</color>
+    <!-- 亮灰色 -->
+    <color name="lightgrey">#D3D3D3</color>
+    <color name="yellow_c">#fafa5a</color>
+    <color name="zi_hao">#7d7d7d</color>
+    <color name="tv_future_prompt">#aaaaaa</color>
+    <color name="blue_light">#46b4dc</color>
+    <color name="orange_c">#ffc864</color>
+    <color name="green_c">#50ffc8</color>
+    <color name="sex_color">#1087c4</color>
+    <color name="hint">#c3c3c3</color>
+    <color name="about_us">#898989</color>
+    <color name="introducte_color">#6c6c6c</color>
+    <color name="bg_feedback">#fff</color>
+    <color name="tab_title">#0179fc</color>
+
+    <!-- window -->
+    <color name="flashmode_dialog_title_color">#464646</color>
+    <color name="flashmode_item_textcolor">#515151</color>
+    <color name="flashmode_item_presscolor">#EAEAEA</color>
+    <color name="cancle_button_color">#6E6E6E</color>
+    <color name="orangetext">#ffd56c00</color>
+    <color name="B7B7B7">#B7B7B7</color>
+
+    <color name="question_color">#626262</color>
+    <color name="question_tip_color">#acacac</color>
+
+    <color name="yellow">#F88B00</color>
+    <color name="timeline">#d4d4d4</color>
+
+    <color name="c5c8bb4">#5c8bb4</color>
+
+    <color name="chart_line">#26cfab</color>
+
+    <!-- chart -->
+    <color name="bp_color1">#fba436</color>
+    <color name="bp_color2">#b07429</color>
+    <color name="bp_color3">#3aa2d6</color>
+
+    <color name="bg_color1">#fa88c1</color>
+    <color name="bg_color2">#fca336</color>
+    <color name="bg_color3">#b07429</color>
+    <color name="bg_color4">#3aa2d6</color>
+
+    <color name="bmi_color">#fca336</color>
+
+    <color name="spo_color">#fca336</color>
+
+    <color name="sleep_color">#3aa2d6</color>
+
+    <color name="exercise_orange">#ffad42</color>
+    <color name="exercise_green">#2ec897</color>
+    <color name="exercise_blue">#26bde5</color>
+    <color name="exercise_gray">#d8d8d8</color>
+
+    <color name="stickylistheader_header_normal">#ffe74c3c</color>
+    <color name="stickylistheader_header_pressed">#ffc0392b</color>
+    <color name="stickylistheader_menu_section_header">#FFDDDDDD</color>
+
+
+</resources>
