@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              android:layout_width="match_parent"
+              android:layout_height="50dp"
+              android:background="@color/grey"
+              android:descendantFocusability="afterDescendants"
+              android:orientation="horizontal"
+              android:weightSum="3">
+
+    <TextView
+        android:id="@+id/tv_dockcode"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="1"
+        android:gravity="center"
+        android:padding="10dp"
+        android:text="@string/label_dock_code"
+        android:textColor="@color/black"
+        android:textSize="@dimen/memo_font_size"/>
+
+    <TextView
+        android:id="@+id/tv_stockcode"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="1"
+        android:gravity="center"
+        android:padding="10dp"
+        android:text="@string/label_stock_code"
+        android:textColor="@color/black"
+        android:textSize="@dimen/memo_font_size"/>
+
+    <EditText
+        android:id="@+id/et_num"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="1"
+        android:background="@null"
+        android:gravity="center"
+        android:inputType="number"
+        android:padding="10dp"
+        android:text="@string/label_num"
+        android:textColor="@color/black"
+        android:textSize="@dimen/memo_font_size"
+        />
+
+
+</LinearLayout>

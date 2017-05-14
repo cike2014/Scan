@@ -1,7 +1,6 @@
 package com.jms.scan.ui;
 
 import android.content.Intent;
-import android.os.SystemClock;
 import android.view.animation.AlphaAnimation;
 import android.view.animation.Animation;
 import android.widget.RelativeLayout;
@@ -40,20 +39,11 @@ public class SplashActivity extends BaseActivity {
 
             @Override
             public void onAnimationEnd(Animation animation) {
-                long uid=SettingUtils.getSharedPreferences(SplashActivity.this, Constants.UID, 0L);
-                if (uid == 0L) {
+                int uid=SettingUtils.getSharedPreferences(SplashActivity.this, Constants.UID, -1);
+                if (uid == -1) {
                     startActivity(new Intent(SplashActivity.this, LoginActivity.class));
                 } else {
-                    long lastLoginTime=SettingUtils.getSharedPreferences(SplashActivity.this, Constants.LOGIN_TIME, 0L);
-                    if (lastLoginTime == 0L) {
-                        startActivity(new Intent(SplashActivity.this, LoginActivity.class));
-                    }
-                    long now=SystemClock.currentThreadTimeMillis();
-                    if (now - lastLoginTime > Constants.SESSION_TIME) {
-                        startActivity(new Intent(SplashActivity.this, LoginActivity.class));
-                    } else {
-                        startActivity(new Intent(SplashActivity.this, MainActivity.class));
-                    }
+                    startActivity(new Intent(SplashActivity.this, MainActivity.class));
                 }
                 SplashActivity.this.finish();
             }

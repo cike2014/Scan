@@ -1,5 +1,7 @@
 package com.jms.scan.util.common;
 
+import android.content.Context;
+
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -7,9 +9,9 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
 
-import android.content.Context;
-
 public class DateUtils {
+
+	public static final String DEFAULT_FORMAT = "yyyy-MM-dd HH:mm:ss";
 
 	// 用来全局控制 上一周，本周，下一周的周数变化
 	private static int weeks = 0;
@@ -331,7 +333,6 @@ public class DateUtils {
 	 * 获取相应offset 月份的第一天
 	 * 
 	 * @param offset
-	 * @param type
 	 * @return
 	 */
 	public static Date getBeginDayOfMonth(int offset) {
@@ -363,9 +364,48 @@ public class DateUtils {
 		cal.add(Calendar.YEAR, -1);
 		return cal.getTime();
 	}
+
+	public static String Date2FormatString(Date date){
+		SimpleDateFormat sdf = new SimpleDateFormat(DEFAULT_FORMAT);
+		return sdf.format(date);
+	}
+
 	public static String Date2FormatString(Date date, String format) {
 		SimpleDateFormat sdf = new SimpleDateFormat(format);
 		return sdf.format(date);
+	}
+
+	/**
+	 * 获得今天日期
+     */
+	public static long getToday() {
+		Calendar cal = Calendar.getInstance();
+		cal.set(Calendar.HOUR,0);
+		cal.set(Calendar.SECOND,0);
+		cal.set(Calendar.MINUTE,0);
+		cal.set(Calendar.MILLISECOND,0);
+		return cal.getTimeInMillis();
+	}
+
+	/**
+	 * 根据今天日期返回明天日期
+     */
+	public static long getTommrow() {
+		Calendar cal = Calendar.getInstance();
+		cal.setTimeInMillis(getToday());
+		cal.add(Calendar.DAY_OF_YEAR, +1);
+		cal.set(Calendar.HOUR,0);
+		cal.set(Calendar.SECOND,0);
+		cal.set(Calendar.MINUTE,0);
+		cal.set(Calendar.MILLISECOND,0);
+		return cal.getTimeInMillis();
+	}
+
+	public static void main(String[] args){
+		System.out.println(getToday());
+		System.out.println(getTommrow());
+		System.out.println(DateUtils.getDate(getToday(),DEFAULT_FORMAT));
+		System.out.println(DateUtils.getDate(getTommrow(),DEFAULT_FORMAT));
 	}
 
 }

@@ -1,4 +1,4 @@
-package com.jms.scan.bean;
+package com.jms.scan.param;
 
 import java.util.ArrayList;
 import java.util.List;

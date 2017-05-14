@@ -9,21 +9,23 @@ import org.xutils.db.annotation.Table;
 @Table(name="t_user")
 public class User {
 
-    @Column(name = "uid",isId = true,autoGen = false)
-    private int uid;
+    @Column(name="uid", isId=true, autoGen=false)
+    private Integer uid;
 
     @Column(name="user_id")
     private String userid;
 
-    @Column(name = "username")
+    @Column(name="username")
     private String username;
 
+    @Column(name="name")
+    private String name;
 
-    public int getUid() {
+    public Integer getUid() {
         return uid;
     }
 
-    public void setUid(int uid) {
+    public void setUid(Integer uid) {
         this.uid=uid;
     }
 
@@ -43,6 +45,11 @@ public class User {
         this.username=username;
     }
 
+    public String getName() {
+        return name;
+    }
 
-
+    public void setName(String name) {
+        this.name=name;
+    }
 }

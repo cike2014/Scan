@@ -3,47 +3,39 @@
               android:layout_width="match_parent"
               android:layout_height="50dp"
               android:background="@color/grey"
-              android:orientation="horizontal">
+              android:orientation="horizontal"
+    android:weightSum="3">
 
     <TextView
-        android:id="@+id/tv_dockcode"
         android:layout_width="0dp"
         android:layout_height="match_parent"
         android:layout_weight="1"
         android:textSize="@dimen/memo_font_size"
+        android:textColor="@color/black"
         android:padding="10dp"
-        android:gravity="center_vertical|left"
+        android:gravity="center"
         android:text="@string/label_dock_code"/>
 
     <TextView
-        android:id="@+id/tv_stockcode"
         android:layout_width="0dp"
         android:layout_height="match_parent"
-        android:layout_weight="2"
+        android:layout_weight="1"
+        android:textColor="@color/black"
         android:textSize="@dimen/memo_font_size"
-        android:gravity="center_vertical|left"
+        android:gravity="center"
         android:padding="10dp"
         android:text="@string/label_stock_code"/>
 
-   <!-- <TextView
-        android:id="@+id/tv_stockbarcode"
-        android:layout_width="wrap_content"
-        android:layout_height="match_parent"
-        android:layout_weight="1"
-        android:textSize="@dimen/memo_font_size"
-        android:gravity="center_vertical|left"
-        android:paddingLeft="10dp"
-        android:text="@string/label_stock_barcode"/>-->
-
     <TextView
-        android:id="@+id/tv_num"
         android:layout_width="0dp"
         android:layout_height="match_parent"
         android:layout_weight="1"
         android:textSize="@dimen/memo_font_size"
-        android:gravity="center_vertical|left"
+        android:gravity="center"
         android:padding="10dp"
-        android:text="@string/label_num"/>
+        android:text="@string/label_num"
+        android:textColor="@color/black"
+        />
 
 
 </LinearLayout>

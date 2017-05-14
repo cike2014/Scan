@@ -11,14 +11,29 @@
     <string name="tip_password_notnull">密码不能为空</string>
     <string name="tip_server_notnull">服务器地址不能为空</string>
 
+    <string name="order">装箱单</string>
     <string name="label_memo">拼装箱</string>
     <string name="label_fcl">整装箱</string>
+    <string name="label_list">装箱单列表</string>
     <string name="label_dock_code">箱码</string>
     <string name="label_stock_code">产品编号</string>
     <string name="label_stock_barcode">产品条码</string>
     <string name="label_num">数量</string>
-    <string name="label_scan">开始扫码</string>
+    <string name="label_scan">条码</string>
     <string name="label_submit">提交</string>
+    <string name="label_save">保存</string>
+    <string name="label_confirm">确定</string>
+
+    <string name="label_order_code">装箱单号：</string>
+    <string name="label_order_date">制单日期：</string>
+    <string name="label_order_user">操作员：</string>
+    <string name="label_order_customer">客户：</string>
+
+    <string name="order_code">装箱单号</string>
+    <string name="order_customer">客户</string>
+    <string name="order_date">制单日期</string>
+
+    <string name="label_condition">请输入搜索条件</string>
 
     <string name="scan_text">将二维码放入框内, 即可自动扫描</string>
 

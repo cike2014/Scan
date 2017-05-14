@@ -15,16 +15,21 @@ public class Stock implements Serializable {
     private int id;
     @Column(name="code")
     private String code; // 产品编码
-    @Column(name="name")
-    private String name;// 产品名称
-    @Column(name="spec")
-    private String spec;// 规格
-    @Column(name="tid")
-    private int tid;// 产品类别id
-    @Column(name="barcode")
-    private String barcode;// 基本单位|条码
-    @Column(name="statud")
+    @Column(name="box_code")
+    private String boxCode;//箱码
+    @Column(name="bar_code")
+    private String barCode;// 基本单位|条码
+    @Column(name="status")
     private int status;// 1：启用 2：停用
+    @Column(name="ratio")
+    private Integer ratio;//装箱数
+    @Column(name="volume")
+    private Double volume;//体积
+    @Column(name="mass")
+    private Double mass;//质量
+    @Column(name="alloc")
+    private String alloc;//货位
+
 
     public int getId() {
         return id;
@@ -42,36 +47,20 @@ public class Stock implements Serializable {
         this.code=code;
     }
 
-    public String getName() {
-        return name;
+    public String getBoxCode() {
+        return boxCode;
     }
 
-    public void setName(String name) {
-        this.name=name;
+    public void setBoxCode(String boxCode) {
+        this.boxCode=boxCode;
     }
 
-    public String getSpec() {
-        return spec;
+    public String getBarCode() {
+        return barCode;
     }
 
-    public void setSpec(String spec) {
-        this.spec=spec;
-    }
-
-    public int getTid() {
-        return tid;
-    }
-
-    public void setTid(int tid) {
-        this.tid=tid;
-    }
-
-    public String getBarcode() {
-        return barcode;
-    }
-
-    public void setBarcode(String barcode) {
-        this.barcode=barcode;
+    public void setBarCode(String barCode) {
+        this.barCode=barCode;
     }
 
     public int getStatus() {
@@ -82,16 +71,50 @@ public class Stock implements Serializable {
         this.status=status;
     }
 
+    public Integer getRatio() {
+        return ratio;
+    }
+
+    public void setRatio(Integer ratio) {
+        this.ratio=ratio;
+    }
+
+    public Double getVolume() {
+        return volume;
+    }
+
+    public void setVolume(Double volume) {
+        this.volume=volume;
+    }
+
+    public Double getMass() {
+        return mass;
+    }
+
+    public void setMass(Double mass) {
+        this.mass=mass;
+    }
+
+    public String getAlloc() {
+        return alloc;
+    }
+
+    public void setAlloc(String alloc) {
+        this.alloc=alloc;
+    }
+
     @Override
     public String toString() {
         return "Stock{" +
                 "id=" + id +
                 ", code='" + code + '\'' +
-                ", name='" + name + '\'' +
-                ", spec='" + spec + '\'' +
-                ", tid=" + tid +
-                ", barcode='" + barcode + '\'' +
+                ", boxCode='" + boxCode + '\'' +
+                ", barCode='" + barCode + '\'' +
                 ", status=" + status +
+                ", ratio=" + ratio +
+                ", volume=" + volume +
+                ", mass=" + mass +
+                ", alloc='" + alloc + '\'' +
                 '}';
     }
 }

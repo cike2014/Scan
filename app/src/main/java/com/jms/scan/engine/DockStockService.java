@@ -1,21 +1,16 @@
 package com.jms.scan.engine;
 
 import android.database.Cursor;
-import android.os.SystemClock;
-import android.text.TextUtils;
 
-import com.jms.scan.DataCenter;
-import com.jms.scan.bean.Box;
 import com.jms.scan.bean.Dock;
 import com.jms.scan.bean.DockStock;
 import com.jms.scan.bean.Stock;
-import com.jms.scan.dto.DockStockDto;
+import com.jms.scan.engine.base.BaseService;
+import com.jms.scan.engine.util.ServiceFactory;
+import com.jms.scan.param.DockStockDto;
 import com.jms.scan.util.common.Constants;
 
-import org.xutils.DbManager;
-import org.xutils.db.table.TableEntity;
 import org.xutils.ex.DbException;
-import org.xutils.x;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -23,225 +18,221 @@ import java.util.List;
 /**
  * Created by alpha on 2017/1/12.
  */
-public class DockStockService {
-
-    private DbManager db;
-
-    private final static String FLAG_DOCK_CODE="APP_";
+public class DockStockService extends BaseService {
+    private DockService dockService;
+    private StockService stockService;
 
     public DockStockService() {
-        db=x.getDb(DataCenter.get().getDaoConfig());
+        super();
+        dockService=ServiceFactory.getInstance().getDockService();
+        stockService=ServiceFactory.getInstance().getStockService();
     }
 
     /**
-     * 获得未封箱可用箱号
+     * 增加箱子、产品关联，数量为1
      *
-     * @return
+     * @param ocode
+     * @param dcode
+     * @param scode
      * @throws DbException
      */
-    public String getDockCode() throws DbException {
-        TableEntity<?> table=db.getTable(Dock.class);
-        if (!isTableExist(table.getName())) {
-            db.save(new Dock());
-            db.executeUpdateDelete("DELETE FROM t_dock");
-        }
-        Cursor cursor=db.execQuery("SELECT MAX(code) FROM t_dock WHERE type = "+ Constants.FLAG_MEMO);
-        while (cursor.moveToNext()) {
-            String maxcode=cursor.getString(0);
-            int maxInt=0;
-            if (!TextUtils.isEmpty(maxcode)) {
-                Dock dock=getDockByCode(maxcode);
-                if (dock.getStatus() == 1) {
-                    maxInt=Integer.parseInt(maxcode.split("_")[1]);
-                    return FLAG_DOCK_CODE + String.format("%03d", maxInt + 1);
-                } else {
-                    return maxcode;
-                }
-            } else {
-                return FLAG_DOCK_CODE + "001";
-            }
-        }
-        return FLAG_DOCK_CODE + "001";
-    }
-
-    public boolean isTableExist(String tableName) {
-        try {
-            Cursor cursor=db.execQuery("select count(*) from `sqlite_master` where type = 'table' and tbl_name = '" + tableName + "'");
-            while (cursor.moveToNext()) {
-                return cursor.getInt(0) > 0;
-            }
-        } catch (DbException e) {
-            e.printStackTrace();
-        }
-        return false;
+    public void addDockStock(String ocode, String dcode, String scode) throws DbException {
+        addDockStock(ocode, dcode, scode, 1);
     }
 
     /**
-     * 根据条码获得产品
+     * 增加箱子、产品关联，数量为num
      *
-     * @param barcode
-     * @return
+     * @param ocode
+     * @param dcode
+     * @param scode
+     * @param num
      * @throws DbException
      */
-    public Stock getStockByBarcode(String barcode) throws DbException {
-        Stock stock=db.selector(Stock.class).where("barcode", "=", barcode).findFirst();
-        return stock;
-    }
-
-    public Dock getDockByCode(String dockcode) throws DbException {
-        Dock dock=db.selector(Dock.class).where("code", "=", dockcode).findFirst();
-        return dock;
-    }
-
-    public void saveDock(Dock dock) throws DbException {
-        db.save(dock);
-    }
-
-    public void addDockStock(int did,int sid) throws DbException{
-        addDockStock(did,sid,1);
-    }
-
-    public void addDockStock(int did, int sid,int num) throws DbException {
+    public void addDockStock(String ocode, String dcode, String scode, int num) throws DbException {
         DockStock dockStock=new DockStock();
-        dockStock.setDid(did);
-        dockStock.setSid(sid);
+        dockStock.setOcode(ocode);
+        dockStock.setDcode(dcode);
+        dockStock.setScode(scode);
         dockStock.setNum(num);
         db.save(dockStock);
     }
 
-    public DockStock getDockStock(int did, int sid) throws DbException {
-        TableEntity<?> table=db.getTable(DockStock.class);
-        if (!isTableExist(table.getName())) {
-            db.save(new DockStock());
-            db.executeUpdateDelete("DELETE FROM t_dock_stock");
-        }
-        DockStock dockStock=db.selector(DockStock.class).where("did", "=", did).and("sid", "=", sid).findFirst();
+    /**
+     * 根据箱子id，产品id获得箱子产品关联关系
+     *
+     * @param dcode
+     * @param scode
+     * @return
+     * @throws DbException
+     */
+    public DockStock getDockStock(String ocode, String dcode, String scode) throws DbException {
+        initDockStock();
+        DockStock dockStock=db.selector(DockStock.class).where("ocode", "=", ocode).and("dcode", "=", dcode).and("scode", "=", scode).findFirst();
         return dockStock;
     }
 
-    public void increase(int did, int sid) throws DbException {
-        increase(did, sid, 1);
-    }
-
-    public void increase(int did, int sid, int num) throws DbException {
-        db.executeUpdateDelete("UPDATE t_dock_stock SET num = num+" + num + " WHERE did = " + did + " AND sid = " + sid);
-    }
-
-    public void update(int did,int sid,int num) throws DbException{
-        db.executeUpdateDelete("UPDATE t_dock_stock SET num = " + num + " WHERE did = " + did + " AND sid = " + sid);
-    }
-
-    public void delete(int did,int sid) throws DbException{
-        db.executeUpdateDelete("DELETE FROM t_dock_stock WHERE did = "+did + " AND sid = "+sid);
-    }
     /**
-     * 封箱
+     * 箱子产品关联，递增步数为1
+     *
+     * @param ocode
+     * @param dcode
+     * @param scode
+     * @throws DbException
      */
-    public void updateDock(String dockCode) throws DbException {
-        db.executeUpdateDelete("UPDATE t_dock SET status = 1 WHERE code = '" + dockCode + "'");
+    public void increase(String ocode, String dcode, String scode) throws DbException {
+        increase(ocode, dcode, scode, 1);
     }
 
-    public Box getBoxByCode(String code) throws DbException {
-        Box box=db.selector(Box.class).where("code", "=", code).findFirst();
-        return box;
+    /**
+     * 修改箱子产品关联，递增部署为num
+     *
+     * @param dcode
+     * @param scode
+     * @param num
+     * @throws DbException
+     */
+    public void increase(String ocode, String dcode, String scode, int num) throws DbException {
+        db.executeUpdateDelete("UPDATE t_dock_stock SET num = num+" + num + " WHERE dcode = '" + dcode + "' AND scode = '" + scode + "' AND ocode = '" + ocode + "'");
     }
+
+    public void update(String ocode, String dcode, String scode, int num) throws DbException {
+        db.executeUpdateDelete("UPDATE t_dock_stock SET num = " + num + " WHERE dcode = '" + dcode + "' AND scode = '" + scode + "' AND ocode = '" + ocode + "'");
+    }
+
+    public void delete(String ocode, String dcode, String scode) throws DbException {
+        db.executeUpdateDelete("DELETE FROM t_dock_stock WHERE ocode = '" + ocode + "' AND dcode = '" + dcode + "' AND scode = '" + scode + "'");
+    }
+
 
     /**
      * 扫码成功后，处理整箱逻辑
-     * @param dockcode
+     *
+     * @param ocode
+     * @param dcode
      * @param errors
      */
-    public void execute(String dockcode, List<String> errors) {
-        try {
-            Box box=getBoxByCode(dockcode);
-            if (box == null) {
-                errors.add("该条码不存在，请同步档案后重试");
-                return;
-            }
-            Dock dock=getDockByCode(dockcode);
-            if (dock == null) {
-                dock=new Dock();
-                dock.setCode(dockcode);
-                dock.setStatus(1);
-                dock.setType(2);
-                dock.setDate(SystemClock.currentThreadTimeMillis());
-                saveDock(dock);
-                dock=getDockByCode(dockcode);
-            }
-
-            DockStock dockStock=getDockStock(dock.getId(), box.getSid());
-            if (dockStock == null) {
-                addDockStock(dock.getId(), box.getSid(),box.getNum());
-            } else {
-                increase(dock.getId(),box.getSid(),box.getNum());
-            }
-        } catch (DbException e) {
-            e.printStackTrace();
+    public void executeFclScan(String ocode, String dcode, List<String> errors) throws DbException {
+        Stock stock=stockService.getByBoxCode(dcode);
+        if (stock == null) {
+            errors.add("该条码不存在，请同步档案后重试");
+            return;
         }
+        Dock dock=dockService.get(ocode, dcode);
+        if (dock == null) {
+            dock=new Dock();
+            dock.setCode(dcode);
+            dock.setOcode(ocode);
+            dock.setStatus(Constants.FLAG_UNSEAL);
+            dock.setType(Constants.FLAG_TYPE_FCL);
+            dock.setDate(System.currentTimeMillis());
+            dockService.save(dock);
+            dock=dockService.get(ocode, dcode);
+        }
+        DockStock dockStock=getDockStock(ocode, dcode, stock.getCode());
+        if (dockStock == null) {
+            addDockStock(ocode, dcode, stock.getCode(), stock.getRatio());
+        } else {
+            increase(ocode, dcode, stock.getCode(), stock.getRatio());
+        }
+
     }
 
     /**
      * 扫码成功后处理拼箱逻辑
      *
-     * @param dockcode：箱码
+     * @param ocode:装箱单号
+     * @param dcode：箱码
      * @param barcode：产品条码
      * @param errors
      */
-    public void execute(String dockcode, String barcode, List<String> errors) {
-        try {
-            Stock stock=getStockByBarcode(barcode);
-            if (stock == null) {
-                errors.add("该条码不存在，请同步档案后重试");
-                return;
-            }
-            Dock dock=getDockByCode(dockcode);
-            if (dock == null) {
-                dock=new Dock();
-                dock.setCode(dockcode);
-                dock.setDate(SystemClock.currentThreadTimeMillis());
-                dock.setStatus(2);
-                dock.setType(1);
-                saveDock(dock);
-                dock=getDockByCode(dockcode);
-            }
-            DockStock dockStock=getDockStock(dock.getId(), stock.getId());
-            if (dockStock == null) {
-                addDockStock(dock.getId(), stock.getId());
-            } else {
-                increase(dock.getId(), stock.getId());
-            }
-        } catch (DbException ex) {
-
+    public void excecuteMemoScan(String ocode, String dcode, String barcode, List<String> errors) throws DbException {
+        Stock stock=stockService.getByBarCode(barcode);
+        if (stock == null) {
+            errors.add("该条码不存在，请同步档案后重试");
+            return;
         }
+        Dock dock=dockService.get(ocode, dcode);
+        if (dock == null) {
+            dock=new Dock();
+            dock.setCode(dcode);
+            dock.setDate(System.currentTimeMillis());
+            dock.setStatus(Constants.FLAG_UNSEAL);
+            dock.setType(Constants.FLAG_TYPE_MEMO);
+            dock.setOcode(ocode);
+            dockService.save(dock);
+            dock=dockService.get(ocode, dcode);
+        }
+        DockStock dockStock=getDockStock(ocode, dcode, stock.getCode());
+        if (dockStock == null) {
+            addDockStock(ocode, dcode, stock.getCode());
+        } else {
+            increase(ocode, dcode, stock.getCode());
+        }
+
 
     }
 
     /**
-     * 查看箱子-产品对应关系
-     * @param type 1：拼装箱 2：整装箱
+     * 根据装箱单号获得该箱内装箱与产品对应关系
+     *
+     * @param ocode
      * @return
      * @throws DbException
      */
-    public List<DockStockDto> findDockStockDto(int type) throws DbException {
-        StringBuilder sql=new StringBuilder("SELECT d.id AS did,s.id AS sid ,d.code AS dcode,s.code AS scode,s.barcode AS barcode,s.name AS sname,ds.num AS num ");
+    public List<DockStockDto> findDockStockDto(String ocode) throws DbException {
+        initDock();
+        initDockStock();
+        initOrder();
+        StringBuilder sql=new StringBuilder("SELECT");
+        sql.append(" d.code AS dcode,s.code AS scode,ds.num AS num,ds.ocode AS ocode,s.bar_code AS barCode");
         sql.append(" FROM t_dock_stock ds ");
-        sql.append(" LEFT JOIN t_dock d ON  ds.did = d.id ");
-        sql.append(" LEFT JOIN t_stock s ON ds.sid = s.id ");
-        sql.append(" WHERE d.type = "+type);
+        sql.append(" LEFT JOIN t_dock d ON  ds.dcode = d.code ");
+        sql.append(" LEFT JOIN t_stock s ON ds.scode = s.code ");
+        sql.append(" WHERE ds.ocode = '").append(ocode).append("'");
         Cursor cursor=db.execQuery(sql.toString());
-        List<DockStockDto> dsds=new ArrayList<DockStockDto>();
+        List<DockStockDto> dockStockDtoList=new ArrayList<>();
         while (cursor.moveToNext()) {
             DockStockDto dsd=new DockStockDto();
-            dsd.setDid(cursor.getInt(cursor.getColumnIndex("did")));
-            dsd.setSid(cursor.getInt(cursor.getColumnIndex("sid")));
             dsd.setDcode(cursor.getString(cursor.getColumnIndex("dcode")));
             dsd.setScode(cursor.getString(cursor.getColumnIndex("scode")));
-            dsd.setBarcode(cursor.getString(cursor.getColumnIndex("barcode")));
-            dsd.setSname(cursor.getString(cursor.getColumnIndex("sname")));
+            dsd.setBarCode(cursor.getString(cursor.getColumnIndex("barCode")));
             dsd.setNum(cursor.getInt(cursor.getColumnIndex("num")));
-            dsds.add(dsd);
+            dsd.setOcode(cursor.getString(cursor.getColumnIndex("ocode")));
+            if (dockStockDtoList.indexOf(dsd) == -1) {
+                dockStockDtoList.add(dsd);
+            }
         }
-        return dsds;
+        return dockStockDtoList;
+    }
+
+    /**
+     * 获得某装箱单中某装箱中产品数量，确定是否可以封箱
+     *
+     * @param ocode
+     * @param dcode
+     * @return
+     */
+    public int getOrderDockStockCount(String ocode, String dcode) throws DbException {
+        initDock();
+        StringBuilder sql=new StringBuilder("SELECT SUM(num)");
+        sql.append(" FROM t_dock_stock WHERE ocode = '").append(ocode).append("' AND dcode = '").append(dcode).append("'");
+        Cursor cursor=db.execQuery(sql.toString());
+        while (cursor.moveToNext()) {
+            return cursor.getInt(0);
+        }
+        return 0;
+    }
+
+    /**
+     * 根据装箱单号删除装箱-产品关系
+     *
+     * @param ocode
+     * @throws DbException
+     */
+    public void deleteDockStockByOcode(String ocode) throws DbException {
+        StringBuilder sql=new StringBuilder("DELETE from t_dock_stock WHERE ocode = '" + ocode + "'");
+        db.executeUpdateDelete(sql.toString());
     }
 
 }

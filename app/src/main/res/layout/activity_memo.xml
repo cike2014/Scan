@@ -6,64 +6,58 @@
     >
     <include layout="@layout/topbar_first" android:id="@+id/layout_top"/>
 
-    <RelativeLayout
+    <LinearLayout
         android:id="@+id/rl_operate"
         android:layout_width="match_parent"
         android:layout_height="50dp"
         android:layout_alignParentBottom="true"
-
+        android:orientation="horizontal"
+        android:weightSum="4"
         >
 
-        <Button
-            android:id="@+id/bt_scan"
-            android:layout_width="100dp"
-            android:layout_height="45dp"
-            android:layout_below="@id/bt_fcl"
+        <EditText
+            android:id="@+id/et_barcode"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
             android:layout_gravity="center_horizontal"
-            android:background="@drawable/shape_button_green"
             android:gravity="center"
             android:paddingBottom="5dp"
             android:paddingTop="5dp"
-            android:text="@string/label_scan"
-            android:textColor="#FFFFFF"
-            android:textSize="20sp"
+            android:hint="@string/label_scan"
+            android:textSize="12sp"
             android:layout_alignParentLeft="true"
-            android:layout_marginLeft="15dp"/>
+            android:layout_marginLeft="15dp"
+            android:layout_weight="2"
+            android:focusable="true"
+            android:focusableInTouchMode="true"/>
 
         <Button
             android:id="@+id/bt_seal"
-            android:layout_width="100dp"
+            android:layout_width="0dp"
             android:layout_height="45dp"
-            android:layout_below="@id/bt_fcl"
             android:layout_gravity="center_horizontal"
             android:background="@drawable/shape_button_green"
-            android:gravity="center"
-            android:paddingBottom="5dp"
-            android:paddingTop="5dp"
             android:text="@string/label_seal"
             android:textColor="#FFFFFF"
             android:textSize="20sp"
-            android:layout_marginRight="20dp"
-            android:layout_toRightOf="@id/bt_scan"
-            android:layout_marginLeft="20dp"
+            android:layout_weight="1"
             />
         <Button
-            android:id="@+id/bt_submit"
-            android:layout_width="100dp"
+            android:id="@+id/bt_save"
+            android:layout_width="0dp"
             android:layout_height="45dp"
-            android:layout_below="@id/bt_fcl"
             android:layout_gravity="center_horizontal"
             android:background="@drawable/shape_button_green"
             android:gravity="center"
             android:paddingBottom="5dp"
             android:paddingTop="5dp"
-            android:text="@string/label_submit"
+            android:text="@string/label_save"
             android:textColor="#FFFFFF"
             android:textSize="20sp"
             android:layout_alignParentRight="true"
-            android:layout_marginRight="15dp"
+            android:layout_weight="1"
             />
-    </RelativeLayout>
+    </LinearLayout>
 
     <android.support.v4.widget.SwipeRefreshLayout
         android:id="@+id/srl_memos"

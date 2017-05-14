@@ -10,49 +10,92 @@
         android:id="@+id/layout_top"
         layout="@layout/topbar_first"/>
 
-    <Button
-        android:id="@+id/bt_memo"
-        android:layout_width="270dp"
-        android:layout_height="45dp"
+    <ImageView
+        android:id="@+id/ic_icon"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@mipmap/boy_default"
         android:layout_below="@id/layout_top"
-        android:layout_gravity="center_horizontal"
-        android:layout_marginTop="30dip"
-        android:background="@drawable/shape_button_green"
-        android:gravity="center"
-        android:paddingBottom="5dp"
-        android:paddingTop="5dp"
-        android:text="@string/label_memo"
-        android:textColor="#FFFFFF"
-        android:textSize="20sp"/>
+        android:layout_marginTop="30dp"
+        android:layout_centerHorizontal="true"/>
 
-    <Button
-        android:id="@+id/bt_fcl"
-        android:layout_width="270dp"
-        android:layout_height="45dp"
-        android:layout_below="@id/bt_memo"
-        android:layout_gravity="center_horizontal"
-        android:layout_marginTop="30dip"
-        android:background="@drawable/shape_button_green"
-        android:gravity="center"
-        android:paddingBottom="5dp"
-        android:paddingTop="5dp"
-        android:text="@string/label_fcl"
-        android:textColor="#FFFFFF"
-        android:textSize="20sp"/>
+    <TextView
+        android:id="@+id/tv_name"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/ic_icon"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="20dp"
+        android:textSize="25sp"/>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@id/ic_icon"
+        android:orientation="vertical"
+        android:gravity="center">
+        <Button
+            android:id="@+id/bt_memo"
+            android:layout_width="270dp"
+            android:layout_height="45dp"
+            android:layout_below="@id/layout_top"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="10dip"
+            android:background="@drawable/shape_button_green"
+            android:gravity="center"
+            android:paddingBottom="5dp"
+            android:paddingTop="5dp"
+            android:text="@string/label_memo"
+            android:textColor="#FFFFFF"
+            android:textSize="20sp"/>
+
+        <Button
+            android:id="@+id/bt_fcl"
+            android:layout_width="270dp"
+            android:layout_height="45dp"
+            android:layout_below="@id/bt_memo"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="10dip"
+            android:background="@drawable/shape_button_green"
+            android:gravity="center"
+            android:paddingBottom="5dp"
+            android:paddingTop="5dp"
+            android:text="@string/label_fcl"
+            android:textColor="#FFFFFF"
+            android:textSize="20sp"/>
+
+        <Button
+            android:id="@+id/bt_list"
+            android:layout_width="270dp"
+            android:layout_height="45dp"
+            android:layout_below="@id/bt_memo"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="10dip"
+            android:background="@drawable/shape_button_green"
+            android:gravity="center"
+            android:paddingBottom="5dp"
+            android:paddingTop="5dp"
+            android:text="@string/label_list"
+            android:textColor="#FFFFFF"
+            android:textSize="20sp"/>
 
 
-    <Button
-        android:id="@+id/bt_exit"
-        android:layout_width="270dp"
-        android:layout_height="45dp"
-        android:layout_below="@id/bt_fcl"
-        android:layout_gravity="center_horizontal"
-        android:layout_marginTop="30dip"
-        android:background="@drawable/shape_button_green"
-        android:gravity="center"
-        android:paddingBottom="5dp"
-        android:paddingTop="5dp"
-        android:text=" 退出 "
-        android:textColor="#FFFFFF"
-        android:textSize="20sp"/>
+        <Button
+            android:id="@+id/bt_exit"
+            android:layout_width="270dp"
+            android:layout_height="45dp"
+            android:layout_below="@id/bt_fcl"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="10dip"
+            android:background="@drawable/shape_button_green"
+            android:gravity="center"
+            android:paddingBottom="5dp"
+            android:paddingTop="5dp"
+            android:text=" 退出 "
+            android:textColor="#FFFFFF"
+            android:textSize="20sp"/>
+
+    </LinearLayout>
+
+
 </RelativeLayout>

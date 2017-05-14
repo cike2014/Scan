@@ -1,4 +1,8 @@
-package com.jms.scan.bean;
+package com.jms.scan.param;
+
+import com.jms.scan.bean.Customer;
+import com.jms.scan.bean.Stock;
+import com.jms.scan.bean.User;
 
 import java.util.List;
 
@@ -9,7 +13,7 @@ public class Record {
 
     private User user;
 
-    private List<Box> boxes;
+    private String flag;
 
     private List<Stock> stocks;
 
@@ -23,13 +27,6 @@ public class Record {
         this.user=user;
     }
 
-    public List<Box> getBoxes() {
-        return boxes;
-    }
-
-    public void setBoxes(List<Box> boxes) {
-        this.boxes=boxes;
-    }
 
     public List<Stock> getStocks() {
         return stocks;
@@ -47,11 +44,18 @@ public class Record {
         this.customers=customers;
     }
 
+    public String getFlag() {
+        return flag;
+    }
+
+    public void setFlag(String flag) {
+        this.flag=flag;
+    }
+
     @Override
     public String toString() {
         return "Record{" +
                 "user=" + user +
-                ", boxes=" + boxes +
                 ", stocks=" + stocks +
                 ", customers=" + customers +
                 '}';

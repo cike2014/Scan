@@ -1,52 +1,49 @@
 package com.jms.scan.engine;
 
-import com.jms.scan.DataCenter;
 import com.jms.scan.bean.Customer;
+import com.jms.scan.engine.base.BaseService;
+import com.jms.scan.param.CustomBean;
 
-import org.xutils.DbManager;
 import org.xutils.ex.DbException;
-import org.xutils.x;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
  * Created by alpha on 2017/1/12.
  */
-public class CustomerService {
-    private DbManager db ;
-    public CustomerService(){
-        db=x.getDb(DataCenter.get().getDaoConfig());
+public class CustomerService extends BaseService{
+
+    public Customer get(int id) throws DbException{
+        return db.findById(Customer.class,id);
     }
 
-    public Customer get(int id){
-        try {
-            return db.findById(Customer.class,id);
-        } catch (DbException e) {
-            e.printStackTrace();
-        }
-        return null;
-    }
-
-    public void saveUpdate(Customer customer){
+    public void saveUpdate(Customer customer) throws DbException {
         if(customer==get(customer.getId())){
-            try {
-                db.update(customer);
-            } catch (DbException e) {
-                e.printStackTrace();
-            }
+            db.update(customer);
         }else{
-            try {
-                db.save(customer);
-            } catch (DbException e) {
-                e.printStackTrace();
-            }
+            db.save(customer);
         }
     }
 
-    public void saveUpdate(List<Customer> customerList){
+    public void saveUpdate(List<Customer> customerList) throws DbException{
         for(Customer customer:customerList){
             saveUpdate(customer);
         }
+    }
+
+    public List<CustomBean> listAllBeans() throws DbException{
+        List<Customer> customers = db.findAll(Customer.class);
+        List<CustomBean> beans = new ArrayList<>();
+        for(Customer customer : customers){
+            CustomBean bean = new CustomBean();
+            bean.setId(customer.getId());
+            bean.setCode(customer.getCode());
+            bean.setInfo(customer.getName());
+            beans.add(bean);
+        }
+        return beans;
+
     }
 
 

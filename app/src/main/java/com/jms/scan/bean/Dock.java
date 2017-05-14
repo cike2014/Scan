@@ -15,7 +15,7 @@ public class Dock {
     @Column(name="type")
     private int type;//1 拼装箱 2 整装箱
     @Column(name="date")
-    private long date;//装箱时间
+    private Long date;//装箱时间
     @Column(name="status")
     private int status;// 1 已经封箱2还未封箱
     @Column(name="ocode")
@@ -45,11 +45,11 @@ public class Dock {
         this.type=type;
     }
 
-    public long getDate() {
+    public Long getDate() {
         return date;
     }
 
-    public void setDate(long date) {
+    public void setDate(Long date) {
         this.date=date;
     }
 

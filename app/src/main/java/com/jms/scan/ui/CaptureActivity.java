@@ -20,8 +20,6 @@ import android.widget.Toast;
 import com.google.zxing.BarcodeFormat;
 import com.google.zxing.Result;
 import com.jms.scan.R;
-import com.jms.scan.bean.Box;
-import com.jms.scan.bean.Stock;
 import com.jms.scan.engine.DockStockService;
 import com.jms.scan.util.common.Constants;
 import com.mining.app.zxing.camera.CameraManager;
@@ -29,11 +27,7 @@ import com.mining.app.zxing.decoding.CaptureActivityHandler;
 import com.mining.app.zxing.decoding.InactivityTimer;
 import com.mining.app.zxing.view.ViewfinderView;
 
-import org.xutils.ex.DbException;
-
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Vector;
 
 /**
@@ -57,6 +51,7 @@ public class CaptureActivity extends Activity implements Callback {
     private String dockCode;
     private Handler currentHandler;
     int flag;
+    private static final String TAG = CaptureActivity.class.getSimpleName();
 
     /**
      * Called when the activity is first created.
@@ -71,7 +66,7 @@ public class CaptureActivity extends Activity implements Callback {
         CameraManager.init(getApplication());
 
         flag=getIntent().getIntExtra(Constants.FLAG, 0);
-        if (flag == Constants.FLAG_MEMO) {
+        if (flag == Constants.FLAG_TYPE_MEMO) {
             dockCode=getIntent().getStringExtra("dockCode");
         }
         viewfinderView=(ViewfinderView) findViewById(R.id.viewfinder_view);
@@ -142,46 +137,9 @@ public class CaptureActivity extends Activity implements Callback {
         if (resultString.equals("")) {
             Toast.makeText(this, R.string.scan_error, Toast.LENGTH_SHORT).show();
         } else {
-            try {
-                if (flag == Constants.FLAG_MEMO) {
-                    Stock stock=dockStockService.getStockByBarcode(resultString);
-                    if (stock == null) {
-                        Toast.makeText(this, R.string.scan_stock_notexist, Toast.LENGTH_SHORT).show();
-                    } else {
-                        List<String> errors=new ArrayList<String>();
-                        dockStockService.execute(dockCode, resultString, errors);
-                        if (errors.size() == 0) {
-                            Toast.makeText(this, R.string.scan_success, Toast.LENGTH_SHORT).show();
-                        } else {
-                            Toast.makeText(this, errors.get(0), Toast.LENGTH_SHORT).show();
-                        }
-                    }
-                } else {
-                    Box box=dockStockService.getBoxByCode(resultString);
-                    if (box == null) {
-                        Toast.makeText(this, R.string.scan_box_notexist, Toast.LENGTH_SHORT).show();
-                    } else {
-                        List<String> errors=new ArrayList<String>();
-                        dockStockService.execute(resultString, errors);
-                        if (errors.size() == 0) {
-                            Toast.makeText(this, R.string.scan_success, Toast.LENGTH_SHORT).show();
-                        } else {
-                            Toast.makeText(this, errors.get(0), Toast.LENGTH_SHORT).show();
-                        }
-                    }
-                }
+            if (flag == Constants.FLAG_TYPE_MEMO) {
 
-            } catch (DbException e) {
-                e.printStackTrace();
-            } finally {
-                if (currentHandler != null)
-                    currentHandler.postDelayed(new Runnable() {
-                        @Override
-                        public void run() {
-                            if (handler != null)
-                                handler.restartPreviewAndDecode2();
-                        }
-                    }, 3000);
+            } else {
 
             }
         }

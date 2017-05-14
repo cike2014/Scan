@@ -84,14 +84,15 @@
 
                 <EditText
                     android:id="@+id/et_server"
-                    android:layout_width="200dip"
+                    android:layout_width="match_parent"
                     android:layout_height="40dip"
                     android:layout_centerInParent="true"
                     android:background="@null"
                     android:hint="@string/input_server"
                     android:textColor="@color/black"
                     android:textCursorDrawable="@null"
-                    android:text="http://10.1.2.30:8080"/>
+                    android:paddingLeft="80dp"
+                    android:text="http://cike119.imwork.net"/>
             </RelativeLayout>
 
             <Button

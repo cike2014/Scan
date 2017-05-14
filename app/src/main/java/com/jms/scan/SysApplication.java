@@ -47,6 +47,9 @@ public class SysApplication extends Application {
 
 
     public void exit() {
+        //清空缓存
+        DataCenter.get().clearCache();
+        //清空Activity栈
         for (Activity activity : activityList) {
             if (activity != null) {
                 if (!activity.isFinishing()) activity.finish();
