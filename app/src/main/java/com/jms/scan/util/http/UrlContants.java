@@ -10,13 +10,30 @@ import static com.jms.scan.util.setting.SettingUtils.getSharedPreferences;
  */
 public class UrlContants {
 
-    /**登录url*/
-    public static final String LOGIN_URL = getServerAddress()+"/app/login";
+    private static UrlContants urlContants;
 
-    /**退出url*/
-    public static final String LOGOUT_URL = getServerAddress()+"/app/logout";
+    public static UrlContants getInstance() {
+        if (urlContants == null) {
+            urlContants=new UrlContants();
+        }
+        return urlContants;
+    }
 
-    public static String getServerAddress(){
+    public String getLoginUrl() {
+        return getServerAddress() + "/app/login";
+    }
+
+
+    public String getLogoutUrl() {
+        return getServerAddress() + "/app/logout";
+    }
+
+    public String getSubmitUrl() {
+        return getServerAddress() + "/app/submit";
+    }
+
+
+    public String getServerAddress() {
         return getSharedPreferences(SysApplication.getInstance().getApplicationContext(), Constants.SERVER_ADDRESS, "");
     }
 }

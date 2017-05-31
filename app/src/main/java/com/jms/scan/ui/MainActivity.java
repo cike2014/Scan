@@ -128,7 +128,7 @@ public class MainActivity extends BaseActivity {
         if (uid > -1) {
             Map<String, String> params=new HashMap<>();
             params.put("uid", uid + "");
-            Xutils.get().get(UrlContants.LOGOUT_URL, params, new Xutils.XCallBack() {
+            Xutils.get().get(UrlContants.getInstance().getLogoutUrl(), params, new Xutils.XCallBack() {
                 @Override
                 public void onSuccessResponse(String response) {
                     Result result=ParseUtil.get().getResult(response);
@@ -139,8 +139,9 @@ public class MainActivity extends BaseActivity {
                             LogUtil.e(TAG,"退出时删除用户出现异常:"+ Log.getStackTraceString(e));
                         }
                         SettingUtils.clear(MainActivity.this);
-                        finish();
                         SysApplication.getInstance().exit();
+                        startActivity(new Intent(MainActivity.this,LoginActivity.class));
+                        finish();
                     } else {
                         ToastUtils.showShort(MainActivity.this, "网络故障，暂时无法退出");
                     }

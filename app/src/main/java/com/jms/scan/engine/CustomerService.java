@@ -19,10 +19,10 @@ public class CustomerService extends BaseService{
     }
 
     public void saveUpdate(Customer customer) throws DbException {
-        if(customer==get(customer.getId())){
-            db.update(customer);
-        }else{
+        if(get(customer.getId())==null){
             db.save(customer);
+        }else{
+            db.update(customer);
         }
     }
 

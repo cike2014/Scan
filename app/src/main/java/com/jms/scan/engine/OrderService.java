@@ -88,7 +88,7 @@ public class OrderService extends BaseService {
     public List<OrderInfo> getOrderInfosByUid(int uid) throws DbException {
         initOrder();
         StringBuilder sql=new StringBuilder("SELECT ");
-        sql.append("o.id,o.code,o.date,o.type,o.save,o.uid,u.name AS uname,c.name AS cname,o.ccode AS ccode ");
+        sql.append("o.id,o.code,o.date,o.type,o.save,o.submit,o.uid,u.name AS uname,c.name AS cname,o.ccode AS ccode ");
         sql.append("FROM t_order o LEFT JOIN t_user u ON o.uid = u.uid ");
         sql.append("LEFT JOIN t_customer c ON o.ccode = c.code WHERE o.uid = ").append(uid).append(" ORDER BY o.date DESC ");
         Cursor cursor=db.execQuery(sql.toString());
@@ -100,6 +100,7 @@ public class OrderService extends BaseService {
             info.setDate(cursor.getLong(cursor.getColumnIndex("date")));
             info.setType(cursor.getInt(cursor.getColumnIndex("type")));
             info.setSave(cursor.getInt(cursor.getColumnIndex("save")));
+            info.setSubmit(cursor.getInt(cursor.getColumnIndex("submit")));
             info.setUid(cursor.getInt(cursor.getColumnIndex("uid")));
             info.setUname(cursor.getString(cursor.getColumnIndex("uname")));
             info.setCname(cursor.getString(cursor.getColumnIndex("cname")));

@@ -9,6 +9,8 @@ import com.jms.scan.util.common.Constants;
 
 import org.xutils.ex.DbException;
 
+import java.util.List;
+
 /**
  * Created by alpha on 2017/1/12.
  */
@@ -85,5 +87,15 @@ public class DockService extends BaseService {
     public void deleteDock(String ocode) throws DbException {
         StringBuilder sql=new StringBuilder("DELETE FROM t_dock WHERE ocode = '" + ocode + "'");
         db.executeUpdateDelete(sql.toString());
+    }
+
+    /**
+     * 根据装箱单号获得所有装箱
+     * @param ocode
+     * @return
+     * @throws DbException
+     */
+    public List<Dock> findDockByOcode(String ocode) throws DbException{
+        return db.selector(Dock.class).where("ocode", "=", ocode).findAll();
     }
 }

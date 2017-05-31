@@ -235,4 +235,14 @@ public class DockStockService extends BaseService {
         db.executeUpdateDelete(sql.toString());
     }
 
+    /**
+     * 根据装箱单号获得所有装箱
+     * @param ocode
+     * @return
+     * @throws DbException
+     */
+    public List<DockStock> findDockStockByDcodeAndOcode(String ocode,String dcode) throws DbException{
+        return db.selector(DockStock.class).where("ocode", "=", ocode).and("dcode","=",dcode).findAll();
+    }
+
 }

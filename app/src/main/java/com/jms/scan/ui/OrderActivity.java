@@ -107,6 +107,7 @@ public class OrderActivity extends BaseActivity {
             order.setCode(orderCode);
             order.setDate(now.getTime());
             order.setSave(Constants.FLAG_UNSAVE);
+            order.setSubmit(Constants.FLAG_UNSUBMIT);
             order.setType(flag_type);
             order.setUid(uid);
         } else {//编辑装箱单

@@ -78,4 +78,13 @@ public class DockStockDto {
         result=31 * result + (ocode != null ? ocode.hashCode() : 0);
         return result;
     }
+
+    @Override
+    public String toString() {
+        return "DockStockDto{" +
+                "dcode='" + dcode + '\'' +
+                ", scode='" + scode + '\'' +
+                ", num=" + num +
+                '}';
+    }
 }

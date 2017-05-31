@@ -8,6 +8,7 @@ import android.widget.TextView;
 
 import com.jms.scan.R;
 import com.jms.scan.param.OrderInfo;
+import com.jms.scan.util.common.Constants;
 import com.jms.scan.util.common.DateUtils;
 
 import java.util.ArrayList;
@@ -60,6 +61,17 @@ public class ItemListAdapter extends BaseAdapter {
         } else {
             holder=(ViewHolder) convertView.getTag();
         }
+
+        if(info.getSubmit()== Constants.FLAG_SUBMIT){
+            convertView.setBackgroundColor(context.getResources().getColor(R.color.exercise_green));
+        }else{
+            if(info.getSave()==Constants.FLAG_SAVE){
+                convertView.setBackgroundColor(context.getResources().getColor(R.color.exercise_blue));
+            }else{
+                convertView.setBackgroundColor(context.getResources().getColor(R.color.exercise_gray));
+            }
+        }
+
         holder.mTvCustomer.setText(info.getCname());
         holder.mTvCode.setText(info.getCode());
         holder.mTvDate.setText(DateUtils.getDate(info.getDate(), DateUtils.DEFAULT_FORMAT));

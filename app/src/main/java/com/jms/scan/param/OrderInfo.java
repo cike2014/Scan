@@ -18,6 +18,8 @@ public class OrderInfo {
 
     private Integer save;//1 已经保存 2 未保存
 
+    private Integer submit;//是否提交
+
     private Integer uid;//制单人id
 
     private String uname;//制单人
@@ -35,6 +37,7 @@ public class OrderInfo {
         order.setDate(this.getDate());
         order.setSave(this.getSave());
         order.setType(this.getType());
+        order.setSubmit(this.getSubmit());
         return order;
     }
 
@@ -108,5 +111,13 @@ public class OrderInfo {
 
     public void setCcode(String ccode) {
         this.ccode=ccode;
+    }
+
+    public Integer getSubmit() {
+        return submit;
+    }
+
+    public void setSubmit(Integer submit) {
+        this.submit=submit;
     }
 }

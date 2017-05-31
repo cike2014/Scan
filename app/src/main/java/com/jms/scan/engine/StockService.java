@@ -53,10 +53,10 @@ public class StockService extends BaseService {
      * @param stock
      */
     public void saveUpdate(Stock stock) throws DbException{
-        if(stock==get(stock.getId())){
-            db.update(stock);
-        }else{
+        if(get(stock.getId())==null){
             db.save(stock);
+        }else{
+            db.update(stock);
         }
     }
 

@@ -31,7 +31,7 @@ public class Order {
     private String ccode;//客户编号
 
     @Column(name="submit")
-    private Integer subit;//1 已经提交 2 未提交
+    private Integer submit;//1 已经提交 2 未提交
 
     public Integer getId() {
         return id;
@@ -89,11 +89,11 @@ public class Order {
         this.ccode=ccode;
     }
 
-    public Integer getSubit() {
-        return subit;
+    public Integer getSubmit() {
+        return submit;
     }
 
-    public void setSubit(Integer subit) {
-        this.subit=subit;
+    public void setSubmit(Integer submit) {
+        this.submit=submit;
     }
 }

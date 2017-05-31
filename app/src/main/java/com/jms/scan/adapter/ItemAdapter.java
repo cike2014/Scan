@@ -136,9 +136,7 @@ public class ItemAdapter extends BaseAdapter {
             public boolean onTouch(View v, MotionEvent event) {
                 touch_flag++;
                 if (touch_flag == 2) {
-                    LogUtil.d(TAG, "click:");
                     v.requestFocus();
-                    changeStatus();
                 }
                 return false;
             }
@@ -153,6 +151,8 @@ public class ItemAdapter extends BaseAdapter {
                 DockStockDto bean = (DockStockDto) holder.mEtNum.getTag();
                 if(!StringUtils.isEmpty(s+"")){
                     bean.setNum(Integer.parseInt(s+""));
+                    dsd.setNum(bean.getNum());
+                    changeStatus();
                 }
             }
 
@@ -164,10 +164,7 @@ public class ItemAdapter extends BaseAdapter {
 
             @Override
             public void afterTextChanged(Editable s) {
-                /*String text=holder.mEtNum.getText().toString();
-                if (!StringUtils.isEmpty(text) && !text.equals(cur)) {
-                    dsds.get(position).setNum(Integer.parseInt(text));
-                }*/
+
             }
         });
 

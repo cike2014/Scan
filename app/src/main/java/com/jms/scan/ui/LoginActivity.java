@@ -1,7 +1,6 @@
 package com.jms.scan.ui;
 
 import android.content.Intent;
-import android.os.Handler;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -10,11 +9,11 @@ import android.widget.TextView;
 
 import com.jms.scan.R;
 import com.jms.scan.bean.Customer;
-import com.jms.scan.param.Record;
-import com.jms.scan.param.Result;
 import com.jms.scan.bean.Stock;
 import com.jms.scan.bean.User;
 import com.jms.scan.engine.util.ServiceFactory;
+import com.jms.scan.param.Record;
+import com.jms.scan.param.Result;
 import com.jms.scan.ui.base.BaseActivity;
 import com.jms.scan.util.common.Constants;
 import com.jms.scan.util.common.DeviceUtil;
@@ -101,7 +100,7 @@ public class LoginActivity extends BaseActivity {
         params.put("username", StringUtils.getViewText(mEtAccount));
         params.put("password",StringUtils.getViewText(mEtPassword));
         params.put("mac", new DeviceUtil(LoginActivity.this).getUnique());
-        Xutils.get().post(UrlContants.LOGIN_URL, params, new Xutils.XCallBack() {
+        Xutils.get().post(UrlContants.getInstance().getLoginUrl(), params, new Xutils.XCallBack() {
 
             @Override
             public void onSuccessResponse(String response) {
