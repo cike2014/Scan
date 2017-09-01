@@ -93,5 +93,16 @@ public class StockService extends BaseService {
         return stock;
     }
 
+    /**
+     * 根据产品编码获得产品
+     * @param code
+     * @return
+     * @throws DbException
+     */
+    public Stock getByCode(String code) throws DbException{
+        Stock stock = db.selector(Stock.class).where("code","=",code).findFirst();
+        return stock;
+    }
+
 
 }

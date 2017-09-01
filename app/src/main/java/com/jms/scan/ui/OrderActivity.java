@@ -18,6 +18,7 @@ import com.jms.scan.param.CustomBean;
 import com.jms.scan.param.OrderInfo;
 import com.jms.scan.ui.base.BaseActivity;
 import com.jms.scan.util.common.Constants;
+import com.jms.scan.util.common.DataUtil;
 import com.jms.scan.util.common.DateUtils;
 import com.jms.scan.util.common.StringUtils;
 import com.jms.scan.util.debug.LogUtil;
@@ -30,7 +31,6 @@ import org.xutils.view.annotation.ContentView;
 import org.xutils.view.annotation.ViewInject;
 import org.xutils.x;
 
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -68,11 +68,10 @@ public class OrderActivity extends BaseActivity {
     private int flag_type;
 
     private Order order;
-    private String ccode;//客户编号
+    private String customerCode;//客户编号
 
-
-    private List<CustomBean> beans=new ArrayList<>();
     private static final String TAG=OrderActivity.class.getSimpleName();
+
     @Override
     protected void injectView() {
         x.view().inject(this);
@@ -89,7 +88,6 @@ public class OrderActivity extends BaseActivity {
         int uid=SettingUtils.getSharedPreferences(OrderActivity.this, Constants.UID, -1);
         User user=null;
         try {
-            beans=customerService.listAllBeans();
             user=userService.get(uid);
         } catch (DbException e) {
             LogUtil.e(TAG, Log.getStackTraceString(e));
@@ -117,7 +115,7 @@ public class OrderActivity extends BaseActivity {
                 mTvDate.setText(DateUtils.getDate(info.getDate(), DateUtils.DEFAULT_FORMAT));
                 mTvUser.setText(info.getUname());
                 mTvCustomer.setText(info.getCname());
-                ccode = info.getCcode();//设置客户编号
+                customerCode=info.getCcode();//设置客户编号
                 order=info.getOrder();//设置当前装箱单
             } catch (DbException e) {
                 LogUtil.e(TAG, Log.getStackTraceString(e));
@@ -126,21 +124,23 @@ public class OrderActivity extends BaseActivity {
         mBtConfirm.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                order.setCcode(ccode);
+                order.setCcode(customerCode);
                 if (StringUtils.isEmpty(order.getCcode())) {
                     ToastUtils.showShort(OrderActivity.this, "请先选择客户");
                     return;
                 }
                 if (flag_status == Constants.FLAG_STATUS_ADD) {//新增
                     try {
+                        //新增装箱单信息
                         orderService.save(order);
                     } catch (DbException e) {
                         LogUtil.e(TAG, Log.getStackTraceString(e));
                         ToastUtils.showShort(OrderActivity.this, "设置失败，请重试...");
                     }
-                } else {//修改
+                } else {
                     try {
-                       orderService.updateCustomer(orderCode,ccode);
+                        //修改装箱单信息
+                        orderService.updateCustomer(orderCode, customerCode);
                     } catch (DbException e) {
                         LogUtil.e(TAG, Log.getStackTraceString(e));
                         ToastUtils.showShort(OrderActivity.this, "设置失败，请重试...");
@@ -153,23 +153,27 @@ public class OrderActivity extends BaseActivity {
             }
         });
 
+
         mTvCustomer.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                ListViewDialog dialog=new ListViewDialog(OrderActivity.this) {
+
+
+                ListViewDialog customerDialog=new ListViewDialog(OrderActivity.this) {
                     @Override
-                    protected ArrayList<CustomBean> getListData() {
-                        return (ArrayList<CustomBean>) beans;
+                    protected List<CustomBean> getListData() {
+                        return DataUtil.getInstance().getAllCustomers();
                     }
                 };
-                dialog.onCreateDialog();
-                dialog.setCallBack(new ListViewDialog.ItemCallback() {
+
+                customerDialog.setCallBack(new ListViewDialog.ItemCallback() {
                     @Override
                     public void itemClick(CustomBean result) {
                         mTvCustomer.setText(result.getInfo());
-                        ccode=result.getCode();
+                        customerCode=result.getCode();
                     }
                 });
+                customerDialog.onCreateDialog();
             }
         });
 

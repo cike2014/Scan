@@ -35,10 +35,9 @@
                     android:layout_centerInParent="true"
                     android:background="@null"
                     android:hint="@string/input_account"
-                    android:inputType="number"
                     android:textColor="@color/black"
                     android:textCursorDrawable="@null"
-                    android:text="andy"/>
+                   />
 
                 <ImageView
                     android:layout_width="16dip"
@@ -65,7 +64,7 @@
                     android:password="true"
                     android:textColor="@color/black"
                     android:textCursorDrawable="@null"
-                    android:text="123456"/>
+                    />
 
                 <ImageView
                     android:layout_width="16dip"
@@ -92,7 +91,7 @@
                     android:textColor="@color/black"
                     android:textCursorDrawable="@null"
                     android:paddingLeft="80dp"
-                    android:text="http://cike119.imwork.net"/>
+                    android:text="http://192.168.1.184"/>
             </RelativeLayout>
 
             <Button

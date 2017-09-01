@@ -189,7 +189,7 @@ public class DockStockService extends BaseService {
         sql.append(" FROM t_dock_stock ds ");
         sql.append(" LEFT JOIN t_dock d ON  ds.dcode = d.code ");
         sql.append(" LEFT JOIN t_stock s ON ds.scode = s.code ");
-        sql.append(" WHERE ds.ocode = '").append(ocode).append("'");
+        sql.append(" WHERE ds.ocode = '").append(ocode).append("' ORDER BY d.code ASC,s.code ASC ");
         Cursor cursor=db.execQuery(sql.toString());
         List<DockStockDto> dockStockDtoList=new ArrayList<>();
         while (cursor.moveToNext()) {

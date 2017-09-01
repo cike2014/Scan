@@ -7,6 +7,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
+import com.jms.scan.DataCenter;
 import com.jms.scan.R;
 import com.jms.scan.bean.Customer;
 import com.jms.scan.bean.Stock;
@@ -104,7 +105,6 @@ public class LoginActivity extends BaseActivity {
 
             @Override
             public void onSuccessResponse(String response) {
-                hideLoading();
                 Result result=ParseUtil.get().getResult(response, Record.class);
                 if(result.getStatus().equals(Constants.STATUS_N)){
                     mEtAccount.setFocusable(true);
@@ -118,6 +118,8 @@ public class LoginActivity extends BaseActivity {
                         ServiceFactory.getInstance().getUserService().saveOrUpdate(user);
                         ServiceFactory.getInstance().getCustomerService().saveUpdate(customers);
                         ServiceFactory.getInstance().getStockService().saveUpdate(stocks);
+                        //清空ACache缓存
+                        DataCenter.get().getaCache().clear();
                     } catch (DbException e) {
                         LogUtil.e(TAG, Log.getStackTraceString(e));
                         ToastUtils.showShort(LoginActivity.this,"同步档案失败，正在关闭...");
@@ -126,6 +128,7 @@ public class LoginActivity extends BaseActivity {
                     SettingUtils.setEditor(LoginActivity.this,Constants.CLIENT_FLAG,record.getFlag());
                     //维护当前操作员
                     SettingUtils.setEditor(LoginActivity.this,Constants.UID,user.getUid());
+                    hideLoading();
                     startActivity(new Intent(LoginActivity.this,MainActivity.class));
                     LoginActivity.this.finish();
                 }

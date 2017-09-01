@@ -3,10 +3,8 @@ package com.jms.scan;
 import android.graphics.Bitmap;
 import android.widget.ImageView;
 
-import com.jms.scan.engine.util.ServiceFactory;
+import com.jms.scan.util.common.ACache;
 import com.jms.scan.util.common.Constants;
-import com.jms.scan.util.debug.LogUtil;
-import com.jms.scan.util.setting.SettingUtils;
 import com.nostra13.universalimageloader.cache.disc.impl.UnlimitedDiscCache;
 import com.nostra13.universalimageloader.core.DisplayImageOptions;
 import com.nostra13.universalimageloader.core.ImageLoader;
@@ -15,8 +13,6 @@ import com.nostra13.universalimageloader.core.assist.ImageScaleType;
 import com.nostra13.universalimageloader.core.listener.ImageLoadingListener;
 
 import org.xutils.DbManager;
-import org.xutils.ex.DbException;
-import org.xutils.x;
 
 public class DataCenter {
     private static DataCenter instance;
@@ -27,11 +23,19 @@ public class DataCenter {
     private String deviceToken;
     public static ImageLoader IMAGE_LOADER;
     private static DisplayImageOptions IMAGE_OPTIONS;
+    private static ACache aCache;
 
     private static final String TAG = DataCenter.class.getSimpleName();
 
     private DataCenter(SysApplication mApplication) {
         this.mApplication=mApplication;
+    }
+
+    public  ACache getaCache(){
+        if(aCache==null){
+            aCache = ACache.get(mApplication.getBaseContext());
+        }
+        return aCache;
     }
 
     public AppInfo getAppInfo() {

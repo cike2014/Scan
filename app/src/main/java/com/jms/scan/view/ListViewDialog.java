@@ -2,7 +2,6 @@ package com.jms.scan.view;
 
 import android.app.Dialog;
 import android.content.Context;
-import android.support.v4.app.DialogFragment;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.Gravity;
@@ -13,25 +12,26 @@ import android.widget.AdapterView;
 import android.widget.EditText;
 import android.widget.ListView;
 
+import com.google.common.collect.Lists;
 import com.jms.scan.R;
 import com.jms.scan.adapter.ItemBeanAdapter;
 import com.jms.scan.param.CustomBean;
 import com.jms.scan.util.common.DisplayUtil;
 
-import java.util.ArrayList;
 import java.util.List;
 
 /**
  * Created by alpha on 2017/5/3.
  */
 public abstract class ListViewDialog {
-    static DialogFragment dialog=null;
+    private static final String TAG=ListViewDialog.class.getSimpleName();
     private Context context;
     ItemCallback callBack;
-    private static final String TAG=ListViewDialog.class.getSimpleName();
+    private List<CustomBean> customers =Lists.newArrayList();
+    private Dialog dialog;
 
-    public ListViewDialog(Context mcontext) {
-        this.context=mcontext;
+    public ListViewDialog(Context context) {
+        this.context=context;
     }
 
 
@@ -39,29 +39,36 @@ public abstract class ListViewDialog {
         final View view=View.inflate(context, R.layout.dialog_listview,
                 null);
 
-        final Dialog builder=new Dialog(context, R.style.Dialog);
-        builder.setContentView(view);
+        dialog=new Dialog(context, R.style.Dialog);
+        dialog.setContentView(view);
         //设置属性
-        Window dialogWindow=builder.getWindow();
+        Window dialogWindow=dialog.getWindow();
         WindowManager.LayoutParams lp=dialogWindow.getAttributes();
         lp.gravity=Gravity.CENTER;
-        lp.width=DisplayUtil.getScreenWidth(context)*2/3 ;
-        lp.height=DisplayUtil.getScreenHeight(context)*2/3 ;
+        lp.width=DisplayUtil.getScreenWidth(context)*4/5 ;
+        lp.height=DisplayUtil.getScreenHeight(context)*4/5 ;
         dialogWindow.setAttributes(lp);
 
         //设置内容
         ListView listView=(ListView) view.findViewById(R.id.lv_beans);
         listView.setFocusable(true);
         listView.setFocusableInTouchMode(true);
-        final ItemBeanAdapter adapter=new ItemBeanAdapter(context, getListData());
+
+        //设置数据
+        List<CustomBean> beans = getListData();
+        customers.clear();
+        customers.addAll(beans);
+        final ItemBeanAdapter adapter=new ItemBeanAdapter(context, customers);
         listView.setAdapter(adapter);
+        //设置点击事件
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View convertView,
                                     int position, long index) {
-                CustomBean result=getListData().get(position);
+                CustomBean result=customers.get(position);
                 callBack.itemClick(result);
-                builder.dismiss();
+                dialog.dismiss();
+                dialog = null;
             }
         });
         //设置过滤
@@ -75,9 +82,9 @@ public abstract class ListViewDialog {
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
                 String result=s.toString().trim();
-                ArrayList<CustomBean> datas=getListData();
-                List<CustomBean> newDatas=new ArrayList<>();
-                for (CustomBean data : datas) {
+                customers = getListData();
+                List<CustomBean> newDatas = Lists.newArrayList();
+                for (CustomBean data : customers) {
                     if (data.getCode().toUpperCase().indexOf(result.toUpperCase()) > -1) {
                         newDatas.add(data);
                     }
@@ -85,7 +92,9 @@ public abstract class ListViewDialog {
                         newDatas.add(data);
                     }
                 }
-                adapter.setData(newDatas);
+                customers.clear();
+                customers.addAll(newDatas);
+                adapter.setData(customers);
             }
 
             @Override
@@ -93,22 +102,20 @@ public abstract class ListViewDialog {
 
             }
         });
-        builder.show();
-        return builder;
+        //显示窗体
+        dialog.show();
+        return dialog;
     }
 
 
-    protected abstract ArrayList<CustomBean> getListData();
 
-    public ItemCallback getCallBack() {
-        return callBack;
-    }
+    protected abstract List<CustomBean> getListData();
 
     public void setCallBack(ItemCallback callBack) {
         this.callBack=callBack;
     }
 
     public interface ItemCallback {
-        public void itemClick(CustomBean result);
+        void itemClick(CustomBean result);
     }
 }

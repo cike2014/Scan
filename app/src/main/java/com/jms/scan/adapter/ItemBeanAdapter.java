@@ -13,7 +13,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Created by alpha on 2017/5/3.
+ * ListViewDialog中adapter
  */
 public class ItemBeanAdapter extends BaseAdapter {
 

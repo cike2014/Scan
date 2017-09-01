@@ -1,9 +1,11 @@
 package com.jms.scan.param;
 
+import java.io.Serializable;
+
 /**
  * Created by alpha on 2017/5/8.
  */
-public class CustomBean {
+public class CustomBean implements Serializable{
 
     private int id;
 

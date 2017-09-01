@@ -50,5 +50,8 @@ public class Constants {
     public static final int FLAG_CHANGED = 1;
     public static final int FLAG_NOT_CHANGED = 2;
 
+    public static final String KEY_CUSTOMER = "key_customer";
+    public static final String KEY_STOCK = "key_stock";
+
 
 }

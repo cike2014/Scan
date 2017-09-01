@@ -28,4 +28,5 @@ dependencies {
     compile 'com.alibaba:fastjson:1.1.54.android'
     compile 'com.google.android.gms:play-services:7.0.0'
     compile files('libs/zxing.jar')
+    compile files('libs/google-collections-1.0.jar')
 }

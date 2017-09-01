@@ -2,6 +2,7 @@ package com.jms.scan;
 
 import android.app.Activity;
 import android.app.Application;
+import android.content.Context;
 
 import org.xutils.x;
 
@@ -16,6 +17,7 @@ import java.util.List;
 public class SysApplication extends Application {
     private static SysApplication mInstance;
     private final List<Activity> activityList=new LinkedList<Activity>();
+    private static Context mContext;
     private static final String TAG=SysApplication.class.getSimpleName();
 
     @Override
@@ -25,8 +27,13 @@ public class SysApplication extends Application {
         x.Ext.setDebug(BuildConfig.DEBUG);
         mInstance=this;
         DataCenter.init(this);
+        mContext = getApplicationContext();
 //        UnCeHandler catchExcep=new UnCeHandler(this);
 //        Thread.setDefaultUncaughtExceptionHandler(catchExcep);
+    }
+
+    public static Context getContext(){
+        return mContext;
     }
 
     public static SysApplication getInstance() {

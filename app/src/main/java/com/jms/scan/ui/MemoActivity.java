@@ -15,6 +15,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.alibaba.fastjson.JSONObject;
+import com.google.common.collect.Lists;
 import com.jms.scan.R;
 import com.jms.scan.adapter.ItemAdapter;
 import com.jms.scan.bean.Dock;
@@ -80,7 +81,7 @@ public class MemoActivity extends BaseActivity {
     private DockService dockService;
     private StockService stockService;
     private ItemAdapter adapter;
-    private List<DockStockDto> dsds=new ArrayList<>();
+    private List<DockStockDto> dsds=Lists.newArrayList();
     private String dockCode;
     private String orderCode;
     public static String[] datas=new String[]{"6943024154264", "6943024153762", "6943024157616"};
@@ -106,15 +107,13 @@ public class MemoActivity extends BaseActivity {
         dockStockService=ServiceFactory.getInstance().getDockStockService();
         dockService=ServiceFactory.getInstance().getDockService();
         stockService=ServiceFactory.getInstance().getStockService();
-        mLvMemos.addHeaderView(View.inflate(this, R.layout.item_top, null));
-        adapter=new ItemAdapter(this);
-        mLvMemos.setAdapter(adapter);
+        adapter=new ItemAdapter(this,Constants.FLAG_TYPE_MEMO);
+        adapter.setDockStocks(dsds);
         //单号为空，表示新增
         if (StringUtils.isEmpty(orderCode)) {
             //跳转到装箱单介绍界面维护装箱单信息
             try {
                 orderCode=orderService.getCode(Constants.FLAG_TYPE_MEMO, MemoActivity.this);
-                LogUtil.d(TAG, "new:" + orderCode);
                 Intent intent=new Intent(MemoActivity.this, OrderActivity.class);
                 intent.putExtra(Constants.FLAG_ORDER_CODE, orderCode);
                 intent.putExtra(Constants.FLAG_STATUS, Constants.FLAG_STATUS_ADD);
@@ -130,16 +129,14 @@ public class MemoActivity extends BaseActivity {
                     }
                 }, 1000);
             }
-        } else {
-            //直接加载数据
+        }else{
+            //装箱单号不为空
+            resetDockCode();
+            resetAdapter();
             initData();
-            LogUtil.d(TAG, "old:" + orderCode);
         }
-        try {
-            dockCode=dockService.getDockCode(orderCode, Constants.FLAG_TYPE_MEMO);
-        } catch (DbException e) {
-            LogUtil.e(TAG, Log.getStackTraceString(e));
-        }
+
+        mLvMemos.addHeaderView(View.inflate(this, R.layout.item_top, null));
         mSrlMemos.setColorSchemeResources(android.R.color.holo_blue_light, android.R.color.holo_red_light, android.R.color.holo_orange_light, android.R.color.holo_green_light);
         mSrlMemos.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
 
@@ -156,6 +153,20 @@ public class MemoActivity extends BaseActivity {
             }
         });
         initScanListener();
+    }
+
+    private void resetDockCode(){
+        try {
+            dockCode=dockService.getDockCode(orderCode, Constants.FLAG_TYPE_MEMO);
+        } catch (DbException e) {
+            LogUtil.e(TAG, Log.getStackTraceString(e));
+        }
+    }
+
+    private void resetAdapter(){
+        adapter.setOrderCode(orderCode);
+        adapter.setDockCode(dockCode);
+        mLvMemos.setAdapter(adapter);
     }
 
     @Override
@@ -176,8 +187,11 @@ public class MemoActivity extends BaseActivity {
                     }
                     dockService.sealDock(orderCode, dockCode);
                     Toast.makeText(this, R.string.label_seal_success, Toast.LENGTH_SHORT).show();
-                    adapter.notifyDataSetChanged();
-                    dockCode=dockService.getDockCode(orderCode, Constants.FLAG_TYPE_MEMO);
+                    resetDockCode();
+                    resetAdapter();
+                    initData();
+                    //封箱后，直接定为到最后一行
+                    mLvMemos.setSelection(adapter.getCount()-adapter.fillSize-1);
                 } catch (DbException e) {
                     LogUtil.e(TAG, Log.getStackTraceString(e));
                     Toast.makeText(this, R.string.label_seal_error, Toast.LENGTH_SHORT).show();
@@ -185,10 +199,7 @@ public class MemoActivity extends BaseActivity {
                 break;
             case R.id.bt_save:
                 try {
-
-                    LogUtil.d(TAG,"datas:"+dsds);
                     orderService.saveOrder(orderCode);
-
                     if(change==Constants.FLAG_CHANGED){
                         //清空该装箱单
                         dockStockService.deleteDockStockByOcode(orderCode);
@@ -231,7 +242,7 @@ public class MemoActivity extends BaseActivity {
                                 }
                                 info.setDockInfos(dockInfos);
                                 String datas=JSONObject.toJSONString(info);
-                                Map<String,String> params = new HashMap<String, String>(1);
+                                Map<String,String> params = new HashMap<>(1);
                                 params.put("datas",datas);
                                 showLoading();
                                 Xutils.get().post(UrlContants.getInstance().getSubmitUrl(), params, new Xutils.XCallBack() {
@@ -246,6 +257,8 @@ public class MemoActivity extends BaseActivity {
                                             } catch (DbException e) {
                                                 LogUtil.e(TAG,Log.getStackTraceString(e));
                                             }
+                                            startActivity(new Intent(MemoActivity.this,ListActivity.class));
+                                            MemoActivity.this.finish();
                                         }else{
                                             ToastUtils.showShort(MemoActivity.this,result.getInfo());
                                         }
@@ -294,6 +307,8 @@ public class MemoActivity extends BaseActivity {
                 //在OrderActivity界面修改了装箱单信息
                 if (resultCode == Constants.FLAG_CHANGED) {
                     orderCode=data.getStringExtra(Constants.FLAG_ORDER_CODE);
+                    resetDockCode();
+                    resetAdapter();
                 }
 
                 break;
@@ -312,25 +327,22 @@ public class MemoActivity extends BaseActivity {
             @Override
             public void onTextChanged(CharSequence s, int start, int before,
                                       int count) {
-            }
-
-            @Override
-            public void beforeTextChanged(CharSequence s, int start, int count,
-                                          int after) {
-            }
-
-            @Override
-            public void afterTextChanged(Editable s) {
-                String result=mEtBarCode.getText().toString();
-                if ("".equals(result.trim())) {
+                String result=s.toString();
+                if (StringUtils.isEmpty(result)) {
                     return;
                 }
                 try {
                     Stock stock=stockService.getByBarCode(result);
                     if (stock == null) {
-                        Toast.makeText(MemoActivity.this, R.string.scan_stock_notexist, Toast.LENGTH_SHORT).show();
+//                        Toast.makeText(MemoActivity.this, R.string.scan_stock_notexist, Toast.LENGTH_SHORT).show();
+                        new Handler().postDelayed(new Runnable() {
+                            @Override
+                            public void run() {
+                                mEtBarCode.setText("");
+                            }
+                        }, 200);
                     } else {
-                        List<String> errors=new ArrayList<>();
+                        List<String> errors=Lists.newArrayList();
                         dockStockService.excecuteMemoScan(orderCode, dockCode, result, errors);
                         if (errors.size() == 0) {
                             new Handler().postDelayed(new Runnable() {
@@ -348,6 +360,16 @@ public class MemoActivity extends BaseActivity {
                     LogUtil.e(TAG, Log.getStackTraceString(e));
                 }
             }
+
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count,
+                                          int after) {
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+
+            }
         });
     }
 
@@ -357,20 +379,16 @@ public class MemoActivity extends BaseActivity {
     public void initData() {
         try {
             dsds=dockStockService.findDockStockDto(orderCode);
-            adapter.setDsds(dsds);
-            mLvMemos.setSelection(dsds.size() - adapter.fillSize - 1);
+            adapter.setDockStocks(dsds);
         } catch (DbException e) {
             LogUtil.e(TAG, Log.getStackTraceString(e));
         }
     }
 
-    /**
-     * 发生改变，保存时需要更新数据库
-     */
     public void change() {
         change=Constants.FLAG_CHANGED;
+        initData();
     }
-
 
     @Override
     protected void setListener() {

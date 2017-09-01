@@ -101,12 +101,12 @@ public class FclActivity extends BaseActivity {
         orderService=ServiceFactory.getInstance().getOrderService();
         stockService=ServiceFactory.getInstance().getStockService();
         dockStockService=ServiceFactory.getInstance().getDockStockService();
-        dockService =ServiceFactory.getInstance().getDockService();
+        dockService=ServiceFactory.getInstance().getDockService();
         orderCode=getIntent().getStringExtra(Constants.FLAG_ORDER_CODE);
 
         mLvFcl.addHeaderView(View.inflate(this, R.layout.item_top, null));
-        adapter=new ItemAdapter(this);
-        adapter.setDsds(dsds);
+        adapter=new ItemAdapter(this, Constants.FLAG_TYPE_FCL);
+        adapter.setDockStocks(dsds);
         mLvFcl.setAdapter(adapter);
 
         if (StringUtils.isEmpty(orderCode)) {
@@ -131,6 +131,7 @@ public class FclActivity extends BaseActivity {
         } else {
             //直接加载数据
             initData();
+            adapter.setOrderCode(orderCode);
             LogUtil.d(TAG, "old:" + orderCode);
         }
 
@@ -162,23 +163,20 @@ public class FclActivity extends BaseActivity {
             @Override
             public void onTextChanged(CharSequence s, int start, int before,
                                       int count) {
-            }
-
-            @Override
-            public void beforeTextChanged(CharSequence s, int start, int count,
-                                          int after) {
-            }
-
-            @Override
-            public void afterTextChanged(Editable s) {
-                String result=mEtBoxCode.getText().toString();
-                if ("".equals(result.trim())) {
+                String result=s.toString().trim();
+                if (StringUtils.isEmpty(result)) {
                     return;
                 }
                 try {
                     Stock stock=stockService.getByBoxCode(result);
                     if (stock == null) {
-                        Toast.makeText(FclActivity.this, R.string.scan_box_notexist, Toast.LENGTH_SHORT).show();
+//                        Toast.makeText(FclActivity.this, R.string.scan_box_notexist, Toast.LENGTH_SHORT).show();
+                        new Handler().postDelayed(new Runnable() {
+                            @Override
+                            public void run() {
+                                mEtBoxCode.setText("");
+                            }
+                        }, 200);
                     } else {
                         List<String> errors=new ArrayList<>();
                         dockStockService.executeFclScan(orderCode, result, errors);
@@ -198,7 +196,36 @@ public class FclActivity extends BaseActivity {
                     LogUtil.e(TAG, Log.getStackTraceString(e));
                 }
             }
+
+
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count,
+                                          int after) {
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+
+            }
         });
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        switch (requestCode) {
+            case REQUEST_CODE:
+                //在OrderActivity界面修改了装箱单信息
+                if (resultCode == Constants.FLAG_CHANGED) {
+                    orderCode=data.getStringExtra(Constants.FLAG_ORDER_CODE);
+                    adapter.setOrderCode(orderCode);
+                }
+
+                break;
+            default:
+
+                break;
+        }
     }
 
     @Override
@@ -210,12 +237,12 @@ public class FclActivity extends BaseActivity {
             case R.id.bt_save:
                 try {
                     orderService.saveOrder(orderCode);
-                    if(change==Constants.FLAG_CHANGED){
+                    if (change == Constants.FLAG_CHANGED) {
                         //清空该装箱单
                         dockStockService.deleteDockStockByOcode(orderCode);
                         //将list 数据一行行的保存到数据库
-                        for(DockStockDto dto : dsds){
-                            dockStockService.addDockStock(orderCode,dto.getDcode(),dto.getScode(),dto.getNum());
+                        for (DockStockDto dto : dsds) {
+                            dockStockService.addDockStock(orderCode, dto.getDcode(), dto.getScode(), dto.getNum());
                         }
                     }
                     final MyWindow mw=new MyWindow(FclActivity.this);
@@ -251,30 +278,32 @@ public class FclActivity extends BaseActivity {
                                 }
                                 info.setDockInfos(dockInfos);
                                 String datas=JSONObject.toJSONString(info);
-                                Map<String,String> params = new HashMap<String, String>(1);
-                                params.put("datas",datas);
+                                Map<String, String> params=new HashMap<String, String>(1);
+                                params.put("datas", datas);
                                 showLoading();
                                 Xutils.get().post(UrlContants.getInstance().getSubmitUrl(), params, new Xutils.XCallBack() {
                                     @Override
                                     public void onSuccessResponse(String response) {
                                         hideLoading();
                                         Result result=ParseUtil.get().getResult(response);
-                                        if(result.getCode()==0){
-                                            ToastUtils.showShort(FclActivity.this,"提交成功");
+                                        if (result.getCode() == 0) {
+                                            ToastUtils.showShort(FclActivity.this, "提交成功");
                                             try {
                                                 orderService.submitOrder(orderCode);
                                             } catch (DbException e) {
-                                                LogUtil.e(TAG,Log.getStackTraceString(e));
+                                                LogUtil.e(TAG, Log.getStackTraceString(e));
                                             }
-                                        }else{
-                                            ToastUtils.showShort(FclActivity.this,result.getInfo());
+                                            startActivity(new Intent(FclActivity.this,ListActivity.class));
+                                            FclActivity.this.finish();
+                                        } else {
+                                            ToastUtils.showShort(FclActivity.this, result.getInfo());
                                         }
                                     }
 
                                     @Override
                                     public void onError(String message) {
                                         hideLoading();
-                                        ToastUtils.showShort(FclActivity.this,message);
+                                        ToastUtils.showShort(FclActivity.this, message);
                                     }
                                 });
 
@@ -297,7 +326,6 @@ public class FclActivity extends BaseActivity {
                 }
 
 
-
                 break;
             case R.id.tv_title:
                 mEtBoxCode.setText(TestUtil.getRandom(datas));
@@ -311,8 +339,7 @@ public class FclActivity extends BaseActivity {
     public void initData() {
         try {
             dsds=dockStockService.findDockStockDto(orderCode);
-            adapter.setDsds(dsds);
-            mLvFcl.setSelection(dsds.size() - adapter.fillSize - 1);
+            adapter.setDockStocks(dsds);
         } catch (DbException e) {
             LogUtil.e(TAG, Log.getStackTraceString(e));
         }
@@ -323,8 +350,8 @@ public class FclActivity extends BaseActivity {
      */
     public void change() {
         change=Constants.FLAG_CHANGED;
+        initData();
     }
-
 
     @Override
     protected void setListener() {
