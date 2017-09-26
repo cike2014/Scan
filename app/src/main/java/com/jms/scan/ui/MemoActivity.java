@@ -1,5 +1,7 @@
 package com.jms.scan.ui;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Handler;
 import android.support.v4.widget.SwipeRefreshLayout;
@@ -74,6 +76,8 @@ public class MemoActivity extends BaseActivity {
     private ImageView mIvLeft;
     @ViewInject(R.id.iv_right)
     private ImageView mIvRight;
+    @ViewInject(R.id.iv_search)
+    private ImageView mIvSearch;
 
 
     private DockStockService dockStockService;
@@ -94,6 +98,7 @@ public class MemoActivity extends BaseActivity {
         x.view().inject(this);
         mIvLeft.setVisibility(View.VISIBLE);
         mIvRight.setVisibility(View.VISIBLE);
+        mIvSearch.setVisibility(View.VISIBLE);
         mTvTitle.setText(ResourceUtil.getResourceById(this, R.string.label_memo));
         //关闭软键盘输入法
         SoftInputUtil.hideSoftInput(this);
@@ -107,7 +112,7 @@ public class MemoActivity extends BaseActivity {
         dockStockService=ServiceFactory.getInstance().getDockStockService();
         dockService=ServiceFactory.getInstance().getDockService();
         stockService=ServiceFactory.getInstance().getStockService();
-        adapter=new ItemAdapter(this,Constants.FLAG_TYPE_MEMO);
+        adapter=new ItemAdapter(this, Constants.FLAG_TYPE_MEMO);
         adapter.setDockStocks(dsds);
         //单号为空，表示新增
         if (StringUtils.isEmpty(orderCode)) {
@@ -129,7 +134,7 @@ public class MemoActivity extends BaseActivity {
                     }
                 }, 1000);
             }
-        }else{
+        } else {
             //装箱单号不为空
             resetDockCode();
             resetAdapter();
@@ -155,7 +160,7 @@ public class MemoActivity extends BaseActivity {
         initScanListener();
     }
 
-    private void resetDockCode(){
+    private void resetDockCode() {
         try {
             dockCode=dockService.getDockCode(orderCode, Constants.FLAG_TYPE_MEMO);
         } catch (DbException e) {
@@ -163,7 +168,7 @@ public class MemoActivity extends BaseActivity {
         }
     }
 
-    private void resetAdapter(){
+    private void resetAdapter() {
         adapter.setOrderCode(orderCode);
         adapter.setDockCode(dockCode);
         mLvMemos.setAdapter(adapter);
@@ -172,6 +177,32 @@ public class MemoActivity extends BaseActivity {
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
+            case R.id.iv_search:
+                final EditText et = new EditText(this);
+                new AlertDialog.Builder(this).setTitle("请输入产品编码")
+                        .setView(et)
+                        .setPositiveButton("确定",new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                String content = et.getText().toString();
+                                if(StringUtils.isEmpty(content))return;
+                                content = content.toUpperCase();
+                                List<DockStockDto> dockStocks=adapter.getDockStocks();
+                                int index = -1;
+                                for(DockStockDto dockStock : dockStocks){
+                                    index++;
+                                    if(dockStock.getScode().equals(content)){
+                                        break;
+                                    }
+                                }
+                                if(index>-1){
+                                    mLvMemos.setSelection(index + 1);
+                                }
+
+                            }
+                        }).setNegativeButton("取消", null)
+                        .show();
+                break;
             case R.id.iv_left:
                 finish();
                 break;
@@ -191,7 +222,7 @@ public class MemoActivity extends BaseActivity {
                     resetAdapter();
                     initData();
                     //封箱后，直接定为到最后一行
-                    mLvMemos.setSelection(adapter.getCount()-adapter.fillSize-1);
+                    mLvMemos.setSelection(adapter.getCount() - adapter.fillSize - 1);
                 } catch (DbException e) {
                     LogUtil.e(TAG, Log.getStackTraceString(e));
                     Toast.makeText(this, R.string.label_seal_error, Toast.LENGTH_SHORT).show();
@@ -200,12 +231,12 @@ public class MemoActivity extends BaseActivity {
             case R.id.bt_save:
                 try {
                     orderService.saveOrder(orderCode);
-                    if(change==Constants.FLAG_CHANGED){
+                    if (change == Constants.FLAG_CHANGED) {
                         //清空该装箱单
                         dockStockService.deleteDockStockByOcode(orderCode);
                         //将list 数据一行行的保存到数据库
-                        for(DockStockDto dto : dsds){
-                            dockStockService.addDockStock(orderCode,dto.getDcode(),dto.getScode(),dto.getNum());
+                        for (DockStockDto dto : dsds) {
+                            dockStockService.addDockStock(orderCode, dto.getDcode(), dto.getScode(), dto.getNum());
                         }
                     }
 
@@ -242,32 +273,32 @@ public class MemoActivity extends BaseActivity {
                                 }
                                 info.setDockInfos(dockInfos);
                                 String datas=JSONObject.toJSONString(info);
-                                Map<String,String> params = new HashMap<>(1);
-                                params.put("datas",datas);
+                                Map<String, String> params=new HashMap<>(1);
+                                params.put("datas", datas);
                                 showLoading();
                                 Xutils.get().post(UrlContants.getInstance().getSubmitUrl(), params, new Xutils.XCallBack() {
                                     @Override
                                     public void onSuccessResponse(String response) {
                                         hideLoading();
                                         Result result=ParseUtil.get().getResult(response);
-                                        if(result.getCode()==0){
-                                            ToastUtils.showShort(MemoActivity.this,"提交成功");
+                                        if (result.getCode() == 0) {
+                                            ToastUtils.showShort(MemoActivity.this, "提交成功");
                                             try {
                                                 orderService.submitOrder(orderCode);
                                             } catch (DbException e) {
-                                                LogUtil.e(TAG,Log.getStackTraceString(e));
+                                                LogUtil.e(TAG, Log.getStackTraceString(e));
                                             }
-                                            startActivity(new Intent(MemoActivity.this,ListActivity.class));
+                                            startActivity(new Intent(MemoActivity.this, ListActivity.class));
                                             MemoActivity.this.finish();
-                                        }else{
-                                            ToastUtils.showShort(MemoActivity.this,result.getInfo());
+                                        } else {
+                                            ToastUtils.showShort(MemoActivity.this, result.getInfo());
                                         }
                                     }
 
                                     @Override
                                     public void onError(String message) {
                                         hideLoading();
-                                        ToastUtils.showShort(MemoActivity.this,message);
+                                        ToastUtils.showShort(MemoActivity.this, message);
                                     }
                                 });
 
@@ -332,9 +363,8 @@ public class MemoActivity extends BaseActivity {
                     return;
                 }
                 try {
-                    Stock stock=stockService.getByBarCode(result);
+                    final Stock stock=stockService.getByBarCode(result);
                     if (stock == null) {
-//                        Toast.makeText(MemoActivity.this, R.string.scan_stock_notexist, Toast.LENGTH_SHORT).show();
                         new Handler().postDelayed(new Runnable() {
                             @Override
                             public void run() {
@@ -373,21 +403,47 @@ public class MemoActivity extends BaseActivity {
         });
     }
 
+
     /**
      * 初始化数据
      */
     public void initData() {
         try {
-            dsds=dockStockService.findDockStockDto(orderCode);
+            Order order=orderService.getByCode(orderCode);
+            //如果已经保存，进行排序；如果没有保存，不进行排序
+            boolean sorted=false;
+            if (order.getSave().equals(Constants.FLAG_SAVE)) {
+                sorted=true;
+            }
+            dsds=dockStockService.findDockStockDto(orderCode, sorted);
             adapter.setDockStocks(dsds);
+            mLvMemos.setSelection(adapter.getCount() - adapter.fillSize - 1);
         } catch (DbException e) {
             LogUtil.e(TAG, Log.getStackTraceString(e));
         }
     }
 
+    /**
+     * 数据改变后，在Adapter中回调
+     */
     public void change() {
         change=Constants.FLAG_CHANGED;
         initData();
+    }
+
+
+    /**
+     * 根据焦点长度重新为条码框获得焦点
+     */
+    public void requestBarCodeFocus() {
+        mEtBarCode.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                ToastUtils.showShort(MemoActivity.this,"定位扫描位置...");
+                mEtBarCode.requestFocus();
+                SoftInputUtil.hideSoftInput(MemoActivity.this);
+            }
+        }, 100);
     }
 
     @Override
@@ -397,8 +453,8 @@ public class MemoActivity extends BaseActivity {
         mIvLeft.setOnClickListener(this);
         mIvRight.setOnClickListener(this);
         mTvTitle.setOnClickListener(this);
+        mIvSearch.setOnClickListener(this);
     }
-
 
 
 }

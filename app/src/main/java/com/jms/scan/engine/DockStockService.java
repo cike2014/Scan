@@ -180,7 +180,7 @@ public class DockStockService extends BaseService {
      * @return
      * @throws DbException
      */
-    public List<DockStockDto> findDockStockDto(String ocode) throws DbException {
+    public List<DockStockDto> findDockStockDto(String ocode,boolean sorted) throws DbException {
         initDock();
         initDockStock();
         initOrder();
@@ -189,7 +189,10 @@ public class DockStockService extends BaseService {
         sql.append(" FROM t_dock_stock ds ");
         sql.append(" LEFT JOIN t_dock d ON  ds.dcode = d.code ");
         sql.append(" LEFT JOIN t_stock s ON ds.scode = s.code ");
-        sql.append(" WHERE ds.ocode = '").append(ocode).append("' ORDER BY d.code ASC,s.code ASC ");
+        sql.append(" WHERE ds.ocode = '").append(ocode).append("'");
+        if(sorted){
+            sql.append(" ORDER BY d.code ASC,s.code ASC ");
+        }
         Cursor cursor=db.execQuery(sql.toString());
         List<DockStockDto> dockStockDtoList=new ArrayList<>();
         while (cursor.moveToNext()) {

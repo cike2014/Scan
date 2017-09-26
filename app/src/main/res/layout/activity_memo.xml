@@ -73,6 +73,7 @@
             android:listSelector="@color/B7B7B7"
             android:dividerHeight="2dp"
             android:descendantFocusability="beforeDescendants"
+            android:transcriptMode="normal"
             >
         </ListView>
     </android.support.v4.widget.SwipeRefreshLayout>

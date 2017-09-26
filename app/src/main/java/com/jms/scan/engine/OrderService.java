@@ -174,6 +174,14 @@ public class OrderService extends BaseService {
         db.executeUpdateDelete("UPDATE t_order SET submit = "+Constants.FLAG_SUBMIT+" WHERE code = '"+ocode+"'");
     }
 
+    /**
+     * 根据单号删除装箱单
+     * @param ocode
+     * @throws DbException
+     */
+    public void deleteByCode(String ocode) throws DbException{
+        db.executeUpdateDelete("DELETE FROM t_order WHERE code = '"+ocode+"'");
+    }
 
 
 

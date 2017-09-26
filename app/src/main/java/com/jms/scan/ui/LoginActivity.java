@@ -108,6 +108,7 @@ public class LoginActivity extends BaseActivity {
                 Result result=ParseUtil.get().getResult(response, Record.class);
                 if(result.getStatus().equals(Constants.STATUS_N)){
                     mEtAccount.setFocusable(true);
+                    hideLoading();
                     ToastUtils.showShort(LoginActivity.this,result.getInfo());
                 }else{
                     Record record =(Record) result.getDataObj();

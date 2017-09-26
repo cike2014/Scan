@@ -6,12 +6,12 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.TextView;
 
+import com.google.common.collect.Lists;
 import com.jms.scan.R;
 import com.jms.scan.param.OrderInfo;
 import com.jms.scan.util.common.Constants;
 import com.jms.scan.util.common.DateUtils;
 
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -20,7 +20,7 @@ import java.util.List;
 public class ItemListAdapter extends BaseAdapter {
 
     private Context context;
-    private List<OrderInfo> infoList=new ArrayList<>();
+    private List<OrderInfo> infoList=Lists.newArrayList();
 
     public ItemListAdapter(Context context, List<OrderInfo> infoList) {
         this.context=context;
@@ -62,10 +62,10 @@ public class ItemListAdapter extends BaseAdapter {
             holder=(ViewHolder) convertView.getTag();
         }
 
-        if(info.getSubmit()== Constants.FLAG_SUBMIT){
+        if(info.getSubmit().equals(Constants.FLAG_SUBMIT)){
             convertView.setBackgroundColor(context.getResources().getColor(R.color.exercise_green));
         }else{
-            if(info.getSave()==Constants.FLAG_SAVE){
+            if(info.getSave().equals(Constants.FLAG_SAVE)){
                 convertView.setBackgroundColor(context.getResources().getColor(R.color.exercise_blue));
             }else{
                 convertView.setBackgroundColor(context.getResources().getColor(R.color.exercise_gray));

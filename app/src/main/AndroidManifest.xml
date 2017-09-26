@@ -56,8 +56,9 @@
 
         <activity
             android:name=".ui.MemoActivity"
-            android:windowSoftInputMode="adjustPan"
-            android:screenOrientation="portrait">
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="stateUnchanged|adjustPan">
+
         </activity>
         <activity
             android:name=".ui.CaptureActivity"

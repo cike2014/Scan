@@ -1,5 +1,7 @@
 package com.jms.scan.ui;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Handler;
 import android.support.v4.widget.SwipeRefreshLayout;
@@ -32,6 +34,7 @@ import com.jms.scan.param.Result;
 import com.jms.scan.ui.base.BaseActivity;
 import com.jms.scan.util.common.Constants;
 import com.jms.scan.util.common.ResourceUtil;
+import com.jms.scan.util.common.SoftInputUtil;
 import com.jms.scan.util.common.StringUtils;
 import com.jms.scan.util.common.TestUtil;
 import com.jms.scan.util.debug.LogUtil;
@@ -60,6 +63,8 @@ public class FclActivity extends BaseActivity {
     private TextView mTvTitle;
     @ViewInject(R.id.iv_right)
     private ImageView mIvRight;
+    @ViewInject(R.id.iv_search)
+    private ImageView mIvSearch;
 
     @ViewInject(R.id.srl_fcls)
     private SwipeRefreshLayout mSrlFcls;
@@ -94,6 +99,7 @@ public class FclActivity extends BaseActivity {
         mIvLeft.setVisibility(View.VISIBLE);
         mTvTitle.setText(ResourceUtil.getResourceById(this, R.string.label_fcl));
         mIvRight.setVisibility(View.VISIBLE);
+        mIvSearch.setVisibility(View.VISIBLE);
     }
 
     @Override
@@ -234,6 +240,32 @@ public class FclActivity extends BaseActivity {
             case R.id.iv_left:
                 finish();
                 break;
+            case R.id.iv_search:
+                final EditText et = new EditText(this);
+                new AlertDialog.Builder(this).setTitle("请输入产品编码")
+                        .setView(et)
+                        .setPositiveButton("确定",new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                String content = et.getText().toString();
+                                if(StringUtils.isEmpty(content))return;
+                                content = content.toUpperCase();
+                                List<DockStockDto> dockStocks=adapter.getDockStocks();
+                                int index = -1;
+                                for(DockStockDto dockStock : dockStocks){
+                                    index++;
+                                    if(dockStock.getScode().equals(content)){
+                                        break;
+                                    }
+                                }
+                                if(index>-1){
+                                    mLvFcl.setSelection(index + 1);
+                                }
+
+                            }
+                        }).setNegativeButton("取消", null)
+                        .show();
+                break;
             case R.id.bt_save:
                 try {
                     orderService.saveOrder(orderCode);
@@ -293,7 +325,7 @@ public class FclActivity extends BaseActivity {
                                             } catch (DbException e) {
                                                 LogUtil.e(TAG, Log.getStackTraceString(e));
                                             }
-                                            startActivity(new Intent(FclActivity.this,ListActivity.class));
+                                            startActivity(new Intent(FclActivity.this, ListActivity.class));
                                             FclActivity.this.finish();
                                         } else {
                                             ToastUtils.showShort(FclActivity.this, result.getInfo());
@@ -333,13 +365,20 @@ public class FclActivity extends BaseActivity {
         }
     }
 
+
     /**
      * 初始化数据
      */
     public void initData() {
         try {
-            dsds=dockStockService.findDockStockDto(orderCode);
+            boolean sorted=false;
+            Order order=orderService.getByCode(orderCode);
+            if (order.getSave().equals(Constants.FLAG_SAVE)) {
+                sorted=true;
+            }
+            dsds=dockStockService.findDockStockDto(orderCode, sorted);
             adapter.setDockStocks(dsds);
+            mLvFcl.setSelection(adapter.getCount() - adapter.fillSize - 1);
         } catch (DbException e) {
             LogUtil.e(TAG, Log.getStackTraceString(e));
         }
@@ -353,11 +392,26 @@ public class FclActivity extends BaseActivity {
         initData();
     }
 
+    /**
+     * 根据焦点长度重新为条码框获得焦点
+     */
+    public void requestBoxCodeFocus() {
+        mEtBoxCode.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                ToastUtils.showShort(FclActivity.this,"定位扫描位置...");
+                mEtBoxCode.requestFocus();
+                SoftInputUtil.hideSoftInput(FclActivity.this);
+            }
+        }, 100);
+    }
+
     @Override
     protected void setListener() {
         mBtSave.setOnClickListener(this);
         mIvLeft.setOnClickListener(this);
         mIvRight.setOnClickListener(this);
+        mIvSearch.setOnClickListener(this);
         mTvTitle.setOnClickListener(this);
     }
 

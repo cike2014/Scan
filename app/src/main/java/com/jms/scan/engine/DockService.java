@@ -16,7 +16,7 @@ import java.util.List;
  */
 public class DockService extends BaseService {
 
-    private final static String FLAG_DOCK_CODE="APP_";
+    private final static String FLAG_DOCK_CODE="A";
 
     /**
      * 根据装箱单号和装箱号确定一个装箱

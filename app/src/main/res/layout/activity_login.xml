@@ -91,7 +91,8 @@
                     android:textColor="@color/black"
                     android:textCursorDrawable="@null"
                     android:paddingLeft="80dp"
-                    android:text="http://192.168.1.184"/>
+                    android:text="http://192.168.1.184"
+                    />
             </RelativeLayout>
 
             <Button

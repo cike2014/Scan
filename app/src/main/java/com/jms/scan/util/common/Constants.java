@@ -42,6 +42,7 @@ public class Constants {
 
     public static final String FLAG_ORDER_CODE = "orderCode";//装箱单单号
 
+
     public static final String FLAG = "flag";
 
     public static String STATUS_Y = "y";
